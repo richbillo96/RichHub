@@ -552,3 +552,54 @@
   margin: 0;
 }
 
+/* PASSWORD EYE BUTTON FIX */
+.password-box {
+  position: relative;
+}
+
+.password-box .show-password {
+  position: absolute !important;
+  right: 10px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  padding: 0 !important;
+
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+
+  color: #ffffff !important;
+  font-size: 18px !important;
+  cursor: pointer;
+  z-index: 5;
+}
+
+.password-box .show-password:hover {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* REMEMBER ME + FORGOT PASSWORD */
+.login-options {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100%;
+}
+
+.login-options label {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin: 0 !important;
+}
+
+.login-options label input[type="checkbox"] {
+  width: 18px !important;
+  height: 18px !important;
+  margin: 0 !important;
+}
