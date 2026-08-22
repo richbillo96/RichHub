@@ -603,3 +603,42 @@
   height: 18px !important;
   margin: 0 !important;
 }
+
+/* FINAL PASSWORD EYE FIX */
+#auth-section .password-box .show-password {
+  width: 42px !important;
+  height: 42px !important;
+  max-width: none !important;
+  min-width: 42px !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  position: absolute !important;
+  right: 8px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+
+  color: #aeb4ca !important;
+  font-size: 18px !important;
+  cursor: pointer !important;
+}
+
+#auth-section .password-box .show-password:hover {
+  background: transparent !important;
+  transform: translateY(-50%) !important;
+  box-shadow: none !important;
+}
+
+/* FINAL REMEMBER ME FIX */
+#auth-section .login-options label input[type="checkbox"] {
+  width: 18px !important;
+  height: 18px !important;
+  max-width: 18px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+            }
