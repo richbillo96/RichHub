@@ -428,4 +428,150 @@ a {
     .login-card {
         padding: 28px 22px;
     }
-                                                     }
+ /* ===== RichHub Dashboard Upgrade ===== */
+
+#hub-section {
+    min-height: 100vh !important;
+    background: #0b0f14 !important;
+    color: #f5f7fa !important;
+    font-family: Arial, sans-serif;
+}
+
+.dashboard-header {
+    padding: 25px 30px !important;
+    background: #111821 !important;
+    border-bottom: 1px solid #27313d !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+.dashboard-header h1 {
+    margin: 0 !important;
+    font-size: 26px !important;
+}
+
+.dashboard-header p {
+    color: #8d99a8 !important;
+    margin-top: 6px !important;
+}
+
+.logout-btn {
+    background: #1b2430 !important;
+    color: white !important;
+    border: 1px solid #354151 !important;
+    border-radius: 8px !important;
+    padding: 10px 16px !important;
+}
+
+.dashboard-nav {
+    padding: 14px 25px !important;
+    background: #0f151c !important;
+    border-bottom: 1px solid #27313d !important;
+    display: flex !important;
+    gap: 8px !important;
+    overflow-x: auto !important;
+}
+
+.dashboard-nav button {
+    background: #18212b !important;
+    color: #cbd3dd !important;
+    border: 1px solid #2d3947 !important;
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
+    cursor: pointer !important;
+}
+
+.dashboard-nav button:hover {
+    background: #6c63ff !important;
+    color: white !important;
+}
+
+.dashboard-content {
+    max-width: 1400px !important;
+    margin: auto !important;
+    padding: 35px 30px !important;
+}
+
+.dashboard-page h2 {
+    font-size: 28px !important;
+    margin-bottom: 25px !important;
+}
+
+.dashboard-cards {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 18px !important;
+}
+
+.dashboard-card {
+    background: #121a23 !important;
+    border: 1px solid #27323f !important;
+    border-radius: 15px !important;
+    padding: 22px !important;
+    min-height: 140px !important;
+    transition: 0.2s !important;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-4px) !important;
+    border-color: #6c63ff !important;
+}
+
+.dashboard-card span {
+    font-size: 25px !important;
+}
+
+.dashboard-card h3 {
+    color: #929eac !important;
+    font-size: 14px !important;
+}
+
+.dashboard-card p {
+    font-size: 25px !important;
+    font-weight: bold !important;
+}
+
+.dashboard-panel {
+    margin-top: 25px !important;
+    background: #121a23 !important;
+    border: 1px solid #27323f !important;
+    border-radius: 15px !important;
+    padding: 22px !important;
+}
+
+.dashboard-panel button {
+    background: #6c63ff !important;
+    color: white !important;
+    border: 0 !important;
+    border-radius: 8px !important;
+    padding: 11px 16px !important;
+    margin: 5px !important;
+}
+
+.dashboard-panel button:hover {
+    background: #8179ff !important;
+}
+
+/* Mobile */
+@media (max-width: 800px) {
+    .dashboard-cards {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+@media (max-width: 500px) {
+    .dashboard-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 15px !important;
+    }
+
+    .dashboard-cards {
+        grid-template-columns: 1fr !important;
+    }
+
+    .dashboard-content {
+        padding: 25px 15px !important;
+    }
+   }                                                    }
