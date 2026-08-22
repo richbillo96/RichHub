@@ -511,3 +511,53 @@
     font-size: 30px;
   }
             }
+
+/* Fix password eye button */
+.password-box .show-password {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  background: transparent;
+  border: none;
+  box-shadow: none;
+
+  color: #aeb4ca;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* Keep the eye button from stretching */
+.password-box .show-password:hover {
+  background: transparent;
+  transform: translateY(-50%);
+  box-shadow: none;
+}
+
+/* Fix Remember me alignment */
+.login-options label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.login-options label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+
+After adding it:
+
+1. Commit the changes on GitHub.
+2. Wait about 1–3 minutes.
+3. Refresh your RichHub website.
+4. The 👁️ should now be a small eye inside the password field.
+5. Remember me ☑️ should sit properly beside the text.
+
+Your main design is already looking 🔥.
