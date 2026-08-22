@@ -391,3 +391,14 @@ window.addEventListener("DOMContentLoaded", () => {
 
 localStorage.removeItem("supabase_access_token");
 localStorage.removeItem("supabase_user");
+
+function togglePassword() {
+  const password = document.getElementById("auth-password");
+
+  if (password.type === "password") {
+    password.type = "text";
+  } else {
+    password.type = "password";
+  }
+}
+
