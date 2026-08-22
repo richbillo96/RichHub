@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>RichHub Store</title>
+<link rel="stylesheet" href="DS.css">
+</head>
+
+
+  <body>
+    <div id="auth-section">
+    <h2>Account</h2>
+
+    <input id="auth-email" type="email" placeholder="Email">
+    <input id="auth-password" type="password" placeholder="Password">
+
+    <button onclick="signUp()">Sign Up</button>
+    <button onclick="logIn()">Log In</button>
+
+    <p id="auth-message"></p>
+</div>
+<div id="hub-section">
+
+    <!-- HEADER -->
+
+    <header>
+        <h1>Everything You Need to Sell Online</h1>
+
+        <p>
+            Build your business from one simple platform.
+        </p>
+    </header>
+
+
+    <!-- FEATURES -->
+
+    <section class="section">
+
+        <div class="features">
+
+            <div class="feature-card">
+                <div class="feature-icon">🏪</div>
+
+                <h3>Create Your Store</h3>
+
+                <p>
+                    Create your own online store and customize it
+                    for your business.
+                </p>
+            </div>
+
+
+            <div class="feature-card">
+                <div class="feature-icon">📦</div>
+
+                <h3>Manage Products</h3>
+
+                <p>
+                    Add products, prices, descriptions and images
+                    from your dashboard.
+                </p>
+            </div>
+
+
+            <div class="feature-card">
+                <div class="feature-icon">🛒</div>
+
+                <h3>Receive Orders</h3>
+
+                <p>
+                    Customers can browse your products and place
+                    orders through your store.
+                </p>
+            </div>
+
+
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+
+                <h3>Grow Your Business</h3>
+
+                <p>
+                    Track your store activity and grow your
+                    online business.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- PRODUCTS -->
+
+    <section class="section">
+
+        <h2>Our Products</h2>
+
+        <p>
+            Browse products available in the RichHub store.
+        </p>
+
+        <div id="products-list" class="products">
+            <p>Loading products...</p>
+        </div>
+
+    </section>
+
+
+    <!-- PRICING -->
+
+    <section class="section">
+
+        <h2>Simple Pricing</h2>
+
+        <p>
+            Start with a free trial and upgrade when you're ready.
+        </p>
+
+
+        <div class="pricing">
+
+            <div class="price-card">
+
+                <h3>RichHub Store</h3>
+
+                <div class="price">
+                    $20
+                    <span>/ month</span>
+                </div>
+
+                <ul>
+                    <li>✅ Your own online store</li>
+                    <li>✅ Product management</li>
+                    <li>✅ Order management</li>
+                    <li>✅ Seller dashboard</li>
+                    <li>📢 Ads included</li>
+                    <li>🎁 3-day free trial</li>
+                </ul>
+
+                <button
+                    class="trial-btn"
+                    onclick="startTrial()"
+                >
+                    Start Trial
+                </button>
+
+            </div>
+
+
+            <div class="price-card">
+
+                <h3>RichHub Ad-Free</h3>
+
+                <div class="price">
+                    $24
+                    <span>/ month</span>
+                </div>
+
+                <ul>
+                    <li>✅ Everything in Store</li>
+                    <li>✅ Your own online store</li>
+                    <li>✅ Product management</li>
+                    <li>✅ Order management</li>
+                    <li>🚫 No advertisements</li>
+                    <li>🎁 Promotional holiday trials</li>
+                </ul>
+
+                <button
+                    class="trial-btn"
+                    onclick="startAdFree()"
+                >
+                    Choose Ad-Free
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+    </div>
+    
+        <script src="ship.js"></script>
+</body>
+</html>
