@@ -402,3 +402,13 @@ function togglePassword() {
   }
 }
 
+
+async function loginWithGoogle() {
+    const redirectTo = window.location.origin + window.location.pathname;
+
+    window.location.href =
+        SUPABASE_URL +
+        "/auth/v1/authorize?provider=google&redirect_to=" +
+        encodeURIComponent(redirectTo);
+}
+
