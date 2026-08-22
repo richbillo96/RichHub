@@ -11,16 +11,71 @@
 
   <body>
     <div id="auth-section">
-    <h2>Account</h2>
 
-    <input id="auth-email" type="email" placeholder="Email">
-    <input id="auth-password" type="password" placeholder="Password">
+  <div class="login-card">
 
-    <button onclick="signUp()">Sign Up</button>
-    <button onclick="logIn()">Log In</button>
+    <div class="login-logo">RichHub</div>
+
+    <h2>Welcome Back 👋</h2>
+    <p class="login-subtitle">Sign in to continue to your RichHub account</p>
+
+    <div class="input-group">
+      <label for="auth-email">Email</label>
+      <input
+        id="auth-email"
+        type="email"
+        placeholder="Enter your email"
+        autocomplete="email"
+      >
+    </div>
+
+    <div class="input-group">
+      <label for="auth-password">Password</label>
+
+      <div class="password-box">
+        <input
+          id="auth-password"
+          type="password"
+          placeholder="Enter your password"
+          autocomplete="current-password"
+        >
+
+        <button
+          type="button"
+          class="show-password"
+          onclick="togglePassword()"
+        >
+          👁
+        </button>
+      </div>
+    </div>
+
+    <div class="login-options">
+      <label>
+        <input type="checkbox">
+        Remember me
+      </label>
+
+      <a href="#" onclick="return false;">Forgot password?</a>
+    </div>
+
+    <button class="login-btn" onclick="logIn()">
+      Log In
+    </button>
+
+    <div class="divider">
+      <span>OR</span>
+    </div>
+
+    <button class="create-btn" onclick="signUp()">
+      Create Account
+    </button>
 
     <p id="auth-message"></p>
-</div>
+
+  </div>
+
+    </div>
 <div id="hub-section">
 
     <!-- HEADER -->
