@@ -237,7 +237,7 @@ body {
     margin: 0 0 8px;
     font-size: 27px;
 }
-
+no
 .dashboard-page > p {
     color: #8c97a6;
     margin-top: 0;
@@ -428,6 +428,7 @@ a {
     .login-card {
         padding: 28px 22px;
     }
+}
  /* ===== RichHub Dashboard Upgrade ===== */
 
 #hub-section {
@@ -574,4 +575,4 @@ a {
     .dashboard-content {
         padding: 25px 15px !important;
     }
-   }                                                    }
+                                                      
