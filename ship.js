@@ -119,9 +119,12 @@ function isLoggedIn() {
 }
 
 
-function logOut() {
+function logout() {
     localStorage.removeItem("supabase_access_token");
     localStorage.removeItem("supabase_user");
+
+    document.getElementById("auth-section").style.display = "flex";
+    document.getElementById("hub-section").style.display = "none";
 
     showAuthMessage("You have been logged out.");
 }
