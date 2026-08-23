@@ -417,3 +417,25 @@ async function loginWithGoogle() {
         encodeURIComponent(redirectTo);
 }
 
+function showDashboard(section) {
+    const sections = [
+        "overview",
+        "store",
+        "products",
+        "orders",
+        "customers",
+        "revenue",
+        "ads",
+        "settings"
+    ];
+
+    sections.forEach(name => {
+        const element = document.getElementById(name);
+
+        if (element) {
+            element.style.display = name === section ? "block" : "none";
+        }
+    });
+                });
+                }
+}
