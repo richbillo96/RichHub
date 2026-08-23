@@ -435,7 +435,5 @@ function showDashboard(section) {
         if (element) {
             element.style.display = name === section ? "block" : "none";
         }
-    });
-                });
-                }
+        });
 }
