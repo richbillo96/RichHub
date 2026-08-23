@@ -538,3 +538,37 @@ a {
         min-height: 135px;
     }
    }
+
+/* Google + Create Account buttons */
+#auth-section button {
+    font-family: inherit;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+#auth-section button:hover {
+    transform: translateY(-1px);
+}
+
+/* Google button */
+#auth-section button[onclick*="Google"] {
+    background: #ffffff;
+    color: #222222;
+}
+
+/* Create Account button */
+#auth-section button[onclick*="Create"] {
+    background: #252d38;
+    color: #ffffff;
+    border: 1px solid #3a4352;
+}
+
+/* Put the two buttons neatly together */
+#auth-section .login-card button {
+    margin-top: 6px;
+           }
