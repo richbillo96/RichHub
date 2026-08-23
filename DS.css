@@ -539,7 +539,7 @@ a {
     }
    }
 
-/* Google + Create Account buttons */
+/* Google + Create Account buttons */ 
 #auth-section button {
     font-family: inherit;
     border: none;
@@ -572,3 +572,60 @@ a {
 #auth-section .login-card button {
     margin-top: 6px;
            }
+
+/* GOOGLE LOGIN BUTTON */
+.google-btn {
+    width: 100%;
+    padding: 14px;
+    margin-top: 10px;
+    border: 1px solid #303846;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #222222;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.google-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+}
+
+/* CREATE ACCOUNT BUTTON */
+.create-btn {
+    width: 100%;
+    padding: 14px;
+    margin-top: 10px;
+    border: 1px solid #303846;
+    border-radius: 10px;
+    background: #252d38;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.create-btn:hover {
+    background: #313b4a;
+    transform: translateY(-2px);
+}
+
+/* OR DIVIDER */
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 18px 0;
+    color: #8f9aaa;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #303846;
+       }
