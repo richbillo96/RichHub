@@ -386,11 +386,13 @@ window.addEventListener("DOMContentLoaded", () => {
     if (accessToken) {
         document.getElementById("auth-section").style.display = "none";
         document.getElementById("hub-section").style.display = "block";
+    } else {
+        document.getElementById("auth-section").style.display = "flex";
+        document.getElementById("hub-section").style.display = "none";
     }
 });
 
-localStorage.removeItem("supabase_access_token");
-localStorage.removeItem("supabase_user");
+
 
 function togglePassword() {
   const password = document.getElementById("auth-password");
