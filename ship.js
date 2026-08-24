@@ -751,3 +751,25 @@ async function saveStoreToSupabase() {
     alert("Error saving store.");
   }
 }
+// ==========================================
+// AUTO-ADD "SAVE STORE" BUTTON TO STORE TAB
+// ==========================================
+
+function injectStoreSaveButton() {
+  // Only add if not already there
+  if (document.getElementById("supabase-save-store-btn")) return;
+
+  const storeSection = document.getElementById("store-section");
+  if (!storeSection) return;
+
+  const btn = document.createElement("button");
+  btn.id = "supabase-save-store-btn";
+  btn.innerText = "💾 Save Store to Database";
+  btn.style.cssText = "margin-top:15px;padding:12px 20px;background:#4CAF50;color:white;border:none;border-radius:8px;cursor:pointer;font-size:16px;";
+  btn.onclick = saveStoreToSupabase;
+  
+  storeSection.appendChild(btn);
+}
+
+// Check every second for the Store tab to appear
+setInterval(injectStoreSaveButton, 1000);
