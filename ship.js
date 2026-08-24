@@ -1,65 +1,133 @@
+// =========================================
+// SUPABASE CONNECTION
+// =========================================
+
+// PUT YOUR REAL SUPABASE VALUES HERE
+
 const SUPABASE_URL =
     "https://tdrelswytmscpnkxmcgw.supabase.co";
 
 const SUPABASE_KEY =
-    "sb_publishable_t09l4fnt9ZGfnsc5bzxSdA_s64P1y_q";
+    ""sb_publishable_t09l4fnt9ZGfnsc5bzxSdA_s64P1y_q";
+
 
 // =========================================
-// SUPABASE HELPERS
+// SUPABASE HEADERS
 // =========================================
 
 function getSupabaseHeaders() {
-    const token = localStorage.getItem("supabase_access_token");
+
+    const token =
+        localStorage.getItem(
+            "supabase_access_token"
+        );
 
     return {
-        "apikey": SUPABASE_KEY,
-        "Authorization": token
-            ? `Bearer ${token}`
-            : `Bearer ${SUPABASE_KEY}`,
-        "Content-Type": "application/json",
-        "Prefer": "return=representation"
+
+        "apikey":
+            SUPABASE_KEY,
+
+        "Authorization":
+            token
+                ? "Bearer " + token
+                : "Bearer " + SUPABASE_KEY,
+
+        "Content-Type":
+            "application/json",
+
+        "Prefer":
+            "return=representation"
     };
 }
 
+
+// =========================================
+// CURRENT USER
+// =========================================
+
 function getCurrentUser() {
+
     return JSON.parse(
-        localStorage.getItem("supabase_user") || "{}"
+        localStorage.getItem(
+            "supabase_user"
+        ) || "{}"
     );
 }
 
 
 // =========================================
-// AUTHENTICATION
+// AUTH MESSAGE
+// =========================================
+
+function showAuthMessage(message) {
+
+    const box =
+        document.getElementById(
+            "auth-message"
+        );
+
+    if (box) {
+        box.textContent = message;
+    }
+}
+
+
+// =========================================
+// SIGN UP
 // =========================================
 
 async function signUp() {
-    const email = document.getElementById("auth-email").value.trim();
-    const password = document.getElementById("auth-password").value;
+
+    const email =
+        document
+            .getElementById("auth-email")
+            .value
+            .trim();
+
+    const password =
+        document
+            .getElementById("auth-password")
+            .value;
 
     if (!email || !password) {
-        showAuthMessage("Please enter your email and password.");
+
+        showAuthMessage(
+            "Please enter your email and password."
+        );
+
         return;
     }
 
     try {
-        const response = await fetch(
-            SUPABASE_URL + "/auth/v1/signup",
-            {
-                method: "POST",
-                headers: {
-                    "apikey": SUPABASE_KEY,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    email,
-                    password
-                })
-            }
-        );
 
-        const data = await response.json();
+        const response =
+            await fetch(
+                SUPABASE_URL +
+                "/auth/v1/signup",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "apikey":
+                            SUPABASE_KEY,
+
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            email,
+                            password
+                        })
+                }
+            );
+
+        const data =
+            await response.json();
 
         if (!response.ok) {
+
             throw new Error(
                 data.msg ||
                 data.message ||
@@ -69,6 +137,7 @@ async function signUp() {
         }
 
         if (data.access_token) {
+
             localStorage.setItem(
                 "supabase_access_token",
                 data.access_token
@@ -79,57 +148,89 @@ async function signUp() {
                 JSON.stringify(data.user)
             );
 
-            document.getElementById("auth-section").style.display = "none";
-            document.getElementById("hub-section").style.display = "block";
+            openHub();
 
-            await loadStoreId();
+            await loadStore();
+
             await displayProducts();
 
-            showAuthMessage(
-                "Account created successfully! You are logged in."
-            );
         } else {
+
             showAuthMessage(
                 "Account created. Please check your email."
             );
         }
 
     } catch (error) {
-        console.error("Sign up error:", error);
-        showAuthMessage(error.message);
+
+        console.error(
+            "Sign up error:",
+            error
+        );
+
+        showAuthMessage(
+            error.message
+        );
     }
 }
 
 
+// =========================================
+// LOGIN
+// =========================================
+
 async function logIn() {
-    const email = document.getElementById("auth-email").value.trim();
-    const password = document.getElementById("auth-password").value;
+
+    const email =
+        document
+            .getElementById("auth-email")
+            .value
+            .trim();
+
+    const password =
+        document
+            .getElementById("auth-password")
+            .value;
 
     if (!email || !password) {
-        showAuthMessage("Please enter your email and password.");
+
+        showAuthMessage(
+            "Please enter your email and password."
+        );
+
         return;
     }
 
     try {
-        const response = await fetch(
-            SUPABASE_URL +
-            "/auth/v1/token?grant_type=password",
-            {
-                method: "POST",
-                headers: {
-                    "apikey": SUPABASE_KEY,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    email,
-                    password
-                })
-            }
-        );
 
-        const data = await response.json();
+        const response =
+            await fetch(
+                SUPABASE_URL +
+                "/auth/v1/token?grant_type=password",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "apikey":
+                            SUPABASE_KEY,
+
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            email,
+                            password
+                        })
+                }
+            );
+
+        const data =
+            await response.json();
 
         if (!response.ok) {
+
             throw new Error(
                 data.error_description ||
                 data.msg ||
@@ -147,39 +248,52 @@ async function logIn() {
             JSON.stringify(data.user)
         );
 
-        document.getElementById("auth-section").style.display = "none";
-        document.getElementById("hub-section").style.display = "block";
+        openHub();
 
-        await loadStoreId();
+        await loadStore();
+
         await displayProducts();
 
-        showAuthMessage("Login successful! ✅");
-
     } catch (error) {
-        console.error("Login error:", error);
-        showAuthMessage(error.message);
+
+        console.error(
+            "Login error:",
+            error
+        );
+
+        showAuthMessage(
+            error.message
+        );
     }
 }
 
 
-function showAuthMessage(message) {
-    const messageBox =
-        document.getElementById("auth-message");
+// =========================================
+// OPEN HUB
+// =========================================
 
-    if (messageBox) {
-        messageBox.textContent = message;
-    }
-}
+function openHub() {
 
+    document.getElementById(
+        "auth-section"
+    ).style.display = "none";
 
-function isLoggedIn() {
-    return !!localStorage.getItem(
-        "supabase_access_token"
+    document.getElementById(
+        "hub-section"
+    ).style.display = "block";
+
+    showDashboard(
+        "overview"
     );
 }
 
 
+// =========================================
+// LOGOUT
+// =========================================
+
 function logout() {
+
     localStorage.removeItem(
         "supabase_access_token"
     );
@@ -192,41 +306,40 @@ function logout() {
         "store_id"
     );
 
-    document.getElementById("auth-section").style.display = "flex";
-    document.getElementById("hub-section").style.display = "none";
+    document.getElementById(
+        "auth-section"
+    ).style.display = "flex";
 
-    showAuthMessage("You have been logged out.");
-}
-
-
-function checkLoginStatus() {
-    if (isLoggedIn()) {
-        showAuthMessage("You are logged in ✅");
-    } else {
-        showAuthMessage(
-            "Please log in before placing an order."
-        );
-    }
+    document.getElementById(
+        "hub-section"
+    ).style.display = "none";
 }
 
 
 // =========================================
-// PASSWORD / GOOGLE LOGIN
+// PASSWORD
 // =========================================
 
 function togglePassword() {
-    const password =
-        document.getElementById("auth-password");
 
-    if (password.type === "password") {
-        password.type = "text";
-    } else {
-        password.type = "password";
-    }
+    const password =
+        document.getElementById(
+            "auth-password"
+        );
+
+    password.type =
+        password.type === "password"
+            ? "text"
+            : "password";
 }
 
 
-async function loginWithGoogle() {
+// =========================================
+// GOOGLE LOGIN
+// =========================================
+
+function loginWithGoogle() {
+
     const redirectTo =
         window.location.origin +
         window.location.pathname;
@@ -234,241 +347,452 @@ async function loginWithGoogle() {
     window.location.href =
         SUPABASE_URL +
         "/auth/v1/authorize?provider=google&redirect_to=" +
-        encodeURIComponent(redirectTo);
+        encodeURIComponent(
+            redirectTo
+        );
 }
 
 
 // =========================================
-// DASHBOARD
+// DASHBOARD NAVIGATION
 // =========================================
 
 function showDashboard(section) {
+
     const sections = [
+
         "overview",
         "store",
+        "store-editor",
         "products",
         "orders",
         "customers",
         "revenue",
         "ads",
         "settings"
+
     ];
 
-    sections.forEach(name => {
-        const element =
-            document.getElementById(name);
+    sections.forEach(
+        function(name) {
 
-        if (element) {
-            element.style.display =
-                name === section
-                    ? "block"
-                    : "none";
+            const element =
+                document.getElementById(
+                    name
+                );
+
+            if (element) {
+
+                element.style.display =
+                    name === section
+                        ? "block"
+                        : "none";
+            }
         }
-    });
+    );
 
     if (section === "products") {
+
         displayProducts();
+    }
+
+    if (section === "store") {
+
+        loadStore();
     }
 }
 
 
 // =========================================
-// STORE
+// EDIT STORE
 // =========================================
 
 async function editStore() {
-    const storeName =
-        document.getElementById("storeName").value.trim();
 
-    const storeDescription =
-        document.getElementById("storeDescription")
-            .value.trim();
+    const user =
+        getCurrentUser();
 
-    const storeBanner =
-        document.getElementById("storeBanner");
+    if (!user.id) {
 
-    if (!storeName) {
-        alert("Please enter your store name.");
+        alert(
+            "Please log in first."
+        );
+
         return;
     }
 
-    if (!storeDescription) {
-        alert("Please enter a store description.");
-        return;
-    }
+    await loadStore();
 
-    // Save locally too
-    localStorage.setItem(
-        "storeName",
-        storeName
+    showDashboard(
+        "store-editor"
     );
-
-    localStorage.setItem(
-        "storeDescription",
-        storeDescription
-    );
-
-    // Save banner locally
-    if (
-        storeBanner &&
-        storeBanner.files &&
-        storeBanner.files[0]
-    ) {
-        const reader = new FileReader();
-
-        reader.onload = async function(event) {
-
-            localStorage.setItem(
-                "storeBanner",
-                event.target.result
-            );
-
-            await saveStoreToSupabase(
-                storeName,
-                storeDescription,
-                event.target.result
-            );
-        };
-
-        reader.readAsDataURL(
-            storeBanner.files[0]
-        );
-
-    } else {
-
-        const banner =
-            localStorage.getItem("storeBanner") || null;
-
-        await saveStoreToSupabase(
-            storeName,
-            storeDescription,
-            banner
-        );
-    }
 }
 
 
-async function saveStoreToSupabase(
-    name,
-    description,
-    banner
-) {
-    const user = getCurrentUser();
+// =========================================
+// LOAD STORE
+// =========================================
+
+async function loadStore() {
+
+    const user =
+        getCurrentUser();
 
     if (!user.id) {
-        alert("Please log in first.");
-        return null;
+        return;
     }
 
     try {
 
-        // Look for an existing store
-        const findResponse = await fetch(
-            SUPABASE_URL +
-            "/rest/v1/stores?user_id=eq." +
-            encodeURIComponent(user.id) +
-            "&select=*",
-            {
-                method: "GET",
-                headers: getSupabaseHeaders()
-            }
-        );
+        const response =
+            await fetch(
 
-        if (!findResponse.ok) {
-            throw new Error(
-                await findResponse.text()
+                SUPABASE_URL +
+                "/rest/v1/stores?user_id=eq." +
+                encodeURIComponent(user.id) +
+                "&select=*",
+
+                {
+                    method: "GET",
+
+                    headers:
+                        getSupabaseHeaders()
+                }
             );
+
+        if (!response.ok) {
+
+            console.error(
+                await response.text()
+            );
+
+            return;
         }
 
         const stores =
-            await findResponse.json();
+            await response.json();
 
-        let store;
+        if (!stores.length) {
 
-        // UPDATE existing store
-        if (stores.length > 0) {
-
-            store = stores[0];
-
-            const updateResponse =
-                await fetch(
-                    SUPABASE_URL +
-                    "/rest/v1/stores?id=eq." +
-                    encodeURIComponent(store.id),
-                    {
-                        method: "PATCH",
-                        headers: getSupabaseHeaders(),
-                        body: JSON.stringify({
-                            name,
-                            description,
-                            banner_url: banner
-                        })
-                    }
-                );
-
-            if (!updateResponse.ok) {
-                throw new Error(
-                    await updateResponse.text()
-                );
-            }
-
+            return;
         }
 
-        // CREATE new store
-        else {
+        const store =
+            stores[0];
 
-            const createResponse =
-                await fetch(
-                    SUPABASE_URL +
-                    "/rest/v1/stores",
-                    {
-                        method: "POST",
-                        headers: getSupabaseHeaders(),
-                        body: JSON.stringify({
-                            user_id: user.id,
-                            name,
-                            description,
-                            banner_url: banner
-                        })
-                    }
-                );
-
-            if (!createResponse.ok) {
-                throw new Error(
-                    await createResponse.text()
-                );
-            }
-
-            const created =
-                await createResponse.json();
-
-            store = created[0];
-        }
-
-        if (!store || !store.id) {
-            throw new Error(
-                "Store was saved but no store ID was returned."
-            );
-        }
-
-        // THIS IS THE IMPORTANT PART
         localStorage.setItem(
             "store_id",
             store.id
         );
 
-        alert(
-            "✅ Store saved to Supabase!\n\n" +
-            "Your store ID is ready.\n" +
-            "You can now add products."
-        );
+        const nameInput =
+            document.getElementById(
+                "storeName"
+            );
 
-        return store.id;
+        const descriptionInput =
+            document.getElementById(
+                "storeDescription"
+            );
+
+        if (nameInput) {
+
+            nameInput.value =
+                store.name || "";
+        }
+
+        if (descriptionInput) {
+
+            descriptionInput.value =
+                store.description || "";
+        }
+
+        const nameDisplay =
+            document.getElementById(
+                "storeNameDisplay"
+            );
+
+        const descriptionDisplay =
+            document.getElementById(
+                "storeDescriptionDisplay"
+            );
+
+        if (nameDisplay) {
+
+            nameDisplay.textContent =
+                store.name ||
+                "RichHub Store";
+        }
+
+        if (descriptionDisplay) {
+
+            descriptionDisplay.textContent =
+                store.description ||
+                "Your trusted online store for quality products.";
+        }
+
+        if (store.banner_url) {
+
+            const preview =
+                document.getElementById(
+                    "bannerPreview"
+                );
+
+            if (preview) {
+
+                preview.innerHTML =
+                    `<img
+                        src="${store.banner_url}"
+                        alt="Store Banner"
+                    >`;
+            }
+        }
 
     } catch (error) {
 
         console.error(
-            "Store save error:",
+            "Load store error:",
+            error
+        );
+    }
+}
+
+
+// =========================================
+// SAVE EDITED STORE
+// =========================================
+
+async function saveEditedStore() {
+
+    const storeName =
+        document
+            .getElementById(
+                "storeName"
+            )
+            .value
+            .trim();
+
+    const storeDescription =
+        document
+            .getElementById(
+                "storeDescription"
+            )
+            .value
+            .trim();
+
+    const bannerInput =
+        document.getElementById(
+            "storeBanner"
+        );
+
+    if (!storeName) {
+
+        alert(
+            "Please enter your store name."
+        );
+
+        return;
+    }
+
+    if (!storeDescription) {
+
+        alert(
+            "Please enter a store description."
+        );
+
+        return;
+    }
+
+
+    let banner =
+        localStorage.getItem(
+            "storeBanner"
+        ) || null;
+
+
+    if (
+        bannerInput &&
+        bannerInput.files &&
+        bannerInput.files[0]
+    ) {
+
+        const file =
+            bannerInput.files[0];
+
+        if (
+            !file.type.startsWith(
+                "image/"
+            )
+        ) {
+
+            alert(
+                "Please select an image."
+            );
+
+            return;
+        }
+
+        banner =
+            await readFileAsDataURL(
+                file
+            );
+
+        localStorage.setItem(
+            "storeBanner",
+            banner
+        );
+    }
+
+
+    const storeId =
+        localStorage.getItem(
+            "store_id"
+        );
+
+    const user =
+        getCurrentUser();
+
+
+    if (!user.id) {
+
+        alert(
+            "Please log in first."
+        );
+
+        return;
+    }
+
+
+    try {
+
+        let response;
+
+
+        // UPDATE EXISTING STORE
+
+        if (storeId) {
+
+            response =
+                await fetch(
+
+                    SUPABASE_URL +
+                    "/rest/v1/stores?id=eq." +
+                    encodeURIComponent(
+                        storeId
+                    ),
+
+                    {
+                        method: "PATCH",
+
+                        headers:
+                            getSupabaseHeaders(),
+
+                        body:
+                            JSON.stringify({
+
+                                name:
+                                    storeName,
+
+                                description:
+                                    storeDescription,
+
+                                banner_url:
+                                    banner
+                            })
+                    }
+                );
+
+        }
+
+
+        // CREATE STORE
+
+        else {
+
+            response =
+                await fetch(
+
+                    SUPABASE_URL +
+                    "/rest/v1/stores",
+
+                    {
+                        method: "POST",
+
+                        headers:
+                            getSupabaseHeaders(),
+
+                        body:
+                            JSON.stringify({
+
+                                user_id:
+                                    user.id,
+
+                                name:
+                                    storeName,
+
+                                description:
+                                    storeDescription,
+
+                                banner_url:
+                                    banner
+                            })
+                    }
+                );
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                await response.text()
+            );
+        }
+
+
+        const result =
+            await response.json();
+
+
+        if (
+            !storeId &&
+            result.length &&
+            result[0].id
+        ) {
+
+            localStorage.setItem(
+                "store_id",
+                result[0].id
+            );
+        }
+
+
+        // UPDATE DISPLAY
+
+        document.getElementById(
+            "storeNameDisplay"
+        ).textContent =
+            storeName;
+
+        document.getElementById(
+            "storeDescriptionDisplay"
+        ).textContent =
+            storeDescription;
+
+
+        alert(
+            "✅ Your store has been saved!"
+        );
+
+
+        showDashboard(
+            "store"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Save store error:",
             error
         );
 
@@ -476,74 +800,45 @@ async function saveStoreToSupabase(
             "❌ Store could not be saved.\n\n" +
             error.message
         );
-
-        return null;
     }
 }
 
 
 // =========================================
-// LOAD STORE ID
+// FILE READER
 // =========================================
 
-async function loadStoreId() {
+function readFileAsDataURL(file) {
 
-    const user = getCurrentUser();
+    return new Promise(
+        function(resolve, reject) {
 
-    if (!user.id) {
-        return null;
-    }
+            const reader =
+                new FileReader();
 
-    try {
+            reader.onload =
+                function(event) {
 
-        const response = await fetch(
-            SUPABASE_URL +
-            "/rest/v1/stores?user_id=eq." +
-            encodeURIComponent(user.id) +
-            "&select=id",
-            {
-                method: "GET",
-                headers: getSupabaseHeaders()
-            }
-        );
+                    resolve(
+                        event.target.result
+                    );
+                };
 
-        if (!response.ok) {
-            console.error(
-                "Store lookup failed:",
-                await response.text()
+            reader.onerror =
+                function() {
+
+                    reject(
+                        new Error(
+                            "Could not read image."
+                        )
+                    );
+                };
+
+            reader.readAsDataURL(
+                file
             );
-            return null;
         }
-
-        const stores =
-            await response.json();
-
-        if (stores.length > 0) {
-
-            localStorage.setItem(
-                "store_id",
-                stores[0].id
-            );
-
-            console.log(
-                "Store ID loaded:",
-                stores[0].id
-            );
-
-            return stores[0].id;
-        }
-
-        return null;
-
-    } catch (error) {
-
-        console.error(
-            "Could not load store:",
-            error
-        );
-
-        return null;
-    }
+    );
 }
 
 
@@ -554,23 +849,30 @@ async function loadStoreId() {
 function previewBanner(input) {
 
     const preview =
-        document.getElementById("bannerPreview");
+        document.getElementById(
+            "bannerPreview"
+        );
 
-    if (!preview) return;
+    if (!preview) {
+        return;
+    }
 
     if (
         !input.files ||
         !input.files[0]
     ) {
-        preview.innerHTML =
-            "<span>No image selected</span>";
+
         return;
     }
 
     const file =
         input.files[0];
 
-    if (!file.type.startsWith("image/")) {
+    if (
+        !file.type.startsWith(
+            "image/"
+        )
+    ) {
 
         preview.innerHTML =
             "<span>Please select an image.</span>";
@@ -585,49 +887,133 @@ function previewBanner(input) {
         function(event) {
 
             preview.innerHTML =
-                '<img src="' +
-                event.target.result +
-                '" alt="Store Banner">';
+                `<img
+                    src="${event.target.result}"
+                    alt="Store Banner"
+                >`;
         };
 
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(
+        file
+    );
 }
 
 
 // =========================================
-// ADD PRODUCT → SUPABASE
+// LOAD STORE ID
+// =========================================
+
+async function loadStoreId() {
+
+    const user =
+        getCurrentUser();
+
+    if (!user.id) {
+        return null;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+
+                SUPABASE_URL +
+                "/rest/v1/stores?user_id=eq." +
+                encodeURIComponent(user.id) +
+                "&select=id",
+
+                {
+                    method: "GET",
+
+                    headers:
+                        getSupabaseHeaders()
+                }
+            );
+
+        if (!response.ok) {
+
+            console.error(
+                await response.text()
+            );
+
+            return null;
+        }
+
+        const stores =
+            await response.json();
+
+        if (stores.length) {
+
+            localStorage.setItem(
+                "store_id",
+                stores[0].id
+            );
+
+            return stores[0].id;
+        }
+
+        return null;
+
+    } catch (error) {
+
+        console.error(
+            "Load store ID error:",
+            error
+        );
+
+        return null;
+    }
+}
+
+
+// =========================================
+// ADD PRODUCT
 // =========================================
 
 async function addProduct() {
 
     const name =
-        prompt("Enter product name:");
+        prompt(
+            "Enter product name:"
+        );
 
     if (!name || !name.trim()) {
         return;
     }
 
+
     const price =
-        prompt("Enter product price:");
+        prompt(
+            "Enter product price:"
+        );
 
     if (
         !price ||
         isNaN(price) ||
         Number(price) < 0
     ) {
-        alert("Please enter a valid price.");
+
+        alert(
+            "Please enter a valid price."
+        );
+
         return;
     }
 
+
     const description =
-        prompt("Enter product description:");
+        prompt(
+            "Enter product description:"
+        );
 
     if (
         !description ||
         !description.trim()
     ) {
+
         return;
     }
+
 
     const stockInput =
         prompt(
@@ -635,99 +1021,97 @@ async function addProduct() {
             "10"
         );
 
+
     if (
         stockInput === null ||
         isNaN(stockInput) ||
         Number(stockInput) < 0
     ) {
-        alert("Please enter a valid stock amount.");
-        return;
-    }
-
-    // Try existing store ID first
-    let storeId =
-        localStorage.getItem("store_id");
-
-    // If missing, find it from Supabase
-    if (!storeId) {
-        storeId =
-            await loadStoreId();
-    }
-
-    // If still missing, tell the user to save store
-    if (!storeId) {
 
         alert(
-            "⚠️ Your store has not been saved to Supabase yet.\n\n" +
-            "Go to your Store tab and click Edit Store first."
+            "Please enter a valid stock amount."
         );
 
         return;
     }
 
-    const productPayload = {
 
-        store_id: storeId,
+    let storeId =
+        localStorage.getItem(
+            "store_id"
+        );
 
-        name: name.trim(),
 
-        description:
-            description.trim(),
+    if (!storeId) {
 
-        price:
-            Number(price),
+        storeId =
+            await loadStoreId();
+    }
 
-        image_url: null,
 
-        stock:
-            Number(stockInput)
-    };
+    if (!storeId) {
+
+        alert(
+            "⚠️ Please create your store first."
+        );
+
+        return;
+    }
+
 
     try {
 
         const response =
             await fetch(
+
                 SUPABASE_URL +
                 "/rest/v1/product",
+
                 {
                     method: "POST",
-                    headers: getSupabaseHeaders(),
+
+                    headers:
+                        getSupabaseHeaders(),
+
                     body:
-                        JSON.stringify(
-                            productPayload
-                        )
+                        JSON.stringify({
+
+                            store_id:
+                                storeId,
+
+                            name:
+                                name.trim(),
+
+                            description:
+                                description.trim(),
+
+                            price:
+                                Number(price),
+
+                            image_url:
+                                null,
+
+                            stock:
+                                Number(
+                                    stockInput
+                                )
+                        })
                 }
             );
 
+
         if (!response.ok) {
 
-            const errorText =
-                await response.text();
-
-            console.error(
-                "Supabase product error:",
-                errorText
+            throw new Error(
+                await response.text()
             );
-
-            alert(
-                "❌ Product could not be saved.\n\n" +
-                errorText
-            );
-
-            return;
         }
 
-        const saved =
-            await response.json();
-
-        console.log(
-            "Product saved:",
-            saved
-        );
 
         alert(
-            "✅ Product added to Supabase!"
+            "✅ Product added!"
         );
+
 
         await displayProducts();
 
@@ -739,7 +1123,7 @@ async function addProduct() {
         );
 
         alert(
-            "❌ Something went wrong.\n\n" +
+            "❌ Product could not be saved.\n\n" +
             error.message
         );
     }
@@ -747,54 +1131,68 @@ async function addProduct() {
 
 
 // =========================================
-// DISPLAY PRODUCTS FROM SUPABASE
+// DISPLAY PRODUCTS
 // =========================================
 
 async function displayProducts() {
 
-    const productsGrid =
+    const grid =
         document.getElementById(
             "products-grid"
         );
 
-    if (!productsGrid) {
+    if (!grid) {
         return;
     }
 
+
     let storeId =
-        localStorage.getItem("store_id");
+        localStorage.getItem(
+            "store_id"
+        );
+
 
     if (!storeId) {
+
         storeId =
             await loadStoreId();
     }
 
+
     if (!storeId) {
 
-        productsGrid.innerHTML = `
+        grid.innerHTML = `
             <div class="products-empty">
                 <div>📦</div>
                 <h3>No store connected</h3>
-                <p>Save your store first.</p>
+                <p>Create your store first.</p>
             </div>
         `;
 
         return;
     }
 
+
     try {
 
         const response =
             await fetch(
+
                 SUPABASE_URL +
                 "/rest/v1/product?store_id=eq." +
-                encodeURIComponent(storeId) +
+                encodeURIComponent(
+                    storeId
+                ) +
                 "&select=*",
+
                 {
                     method: "GET",
-                    headers: getSupabaseHeaders()
+
+                    headers:
+                        getSupabaseHeaders()
                 }
             );
+
 
         if (!response.ok) {
 
@@ -803,15 +1201,14 @@ async function displayProducts() {
             );
         }
 
+
         const products =
             await response.json();
 
-        if (
-            !products ||
-            products.length === 0
-        ) {
 
-            productsGrid.innerHTML = `
+        if (!products.length) {
+
+            grid.innerHTML = `
                 <div class="products-empty">
                     <div>📦</div>
                     <h3>No products yet</h3>
@@ -826,59 +1223,74 @@ async function displayProducts() {
             return;
         }
 
-        productsGrid.innerHTML = "";
 
-        products.forEach(product => {
+        grid.innerHTML = "";
 
-            const card =
-                document.createElement("div");
 
-            card.className =
-                "product-card";
+        products.forEach(
+            function(product) {
 
-            card.innerHTML = `
+                const card =
+                    document.createElement(
+                        "div"
+                    );
 
-                ${
-                    product.image_url
-                    ? `
-                        <img
-                            class="product-image"
-                            src="${product.image_url}"
-                            alt="${product.name}"
-                        >
-                    `
-                    : `
-                        <div class="product-image">
-                            📦
-                        </div>
-                    `
-                }
+                card.className =
+                    "product-card";
 
-                <h3>
-                    ${product.name}
-                </h3>
 
-                <p>
-                    ${product.description || ""}
-                </p>
+                card.innerHTML = `
 
-                <strong>
-                    $${Number(product.price).toFixed(2)}
-                </strong>
+                    ${
+                        product.image_url
 
-                <p>
-                    Stock: ${product.stock}
-                </p>
+                        ? `
+                            <img
+                                class="product-image"
+                                src="${product.image_url}"
+                                alt="${product.name}"
+                            >
+                        `
 
-                <button
-                    onclick="deleteProduct('${product.id}')"
-                >
-                    🗑️ Delete
-                </button>
-            `;
+                        : `
+                            <div class="product-image">
+                                📦
+                            </div>
+                        `
+                    }
 
-            productsGrid.appendChild(card);
-        });
+                    <h3>
+                        ${product.name}
+                    </h3>
+
+                    <p>
+                        ${product.description || ""}
+                    </p>
+
+                    <strong>
+                        $${Number(
+                            product.price
+                        ).toFixed(2)}
+                    </strong>
+
+                    <p>
+                        Stock:
+                        ${product.stock}
+                    </p>
+
+                    <button
+                        onclick="deleteProduct('${product.id}')"
+                    >
+                        🗑️ Delete
+                    </button>
+                `;
+
+
+                grid.appendChild(
+                    card
+                );
+            }
+        );
 
     } catch (error) {
 
@@ -887,41 +1299,50 @@ async function displayProducts() {
             error
         );
 
-        productsGrid.innerHTML =
+        grid.innerHTML =
             "<p>Could not load products.</p>";
     }
 }
 
 
 // =========================================
-// DELETE PRODUCT FROM SUPABASE
+// DELETE PRODUCT
 // =========================================
 
 async function deleteProduct(id) {
 
-    if (!id) return;
-
-    const confirmed =
-        confirm(
-            "Are you sure you want to delete this product?"
-        );
-
-    if (!confirmed) {
+    if (!id) {
         return;
     }
+
+
+    if (
+        !confirm(
+            "Are you sure you want to delete this product?"
+        )
+    ) {
+
+        return;
+    }
+
 
     try {
 
         const response =
             await fetch(
+
                 SUPABASE_URL +
                 "/rest/v1/product?id=eq." +
                 encodeURIComponent(id),
+
                 {
                     method: "DELETE",
-                    headers: getSupabaseHeaders()
+
+                    headers:
+                        getSupabaseHeaders()
                 }
             );
+
 
         if (!response.ok) {
 
@@ -930,9 +1351,11 @@ async function deleteProduct(id) {
             );
         }
 
+
         alert(
             "✅ Product deleted."
         );
+
 
         await displayProducts();
 
@@ -952,275 +1375,6 @@ async function deleteProduct(id) {
 
 
 // =========================================
-// PUBLIC PRODUCTS / SHOP
-// =========================================
-
-async function loadProducts() {
-
-    const productsList =
-        document.getElementById(
-            "products-list"
-        );
-
-    if (!productsList) {
-        return;
-    }
-
-    try {
-
-        const response =
-            await fetch(
-                SUPABASE_URL +
-                "/rest/v1/product?select=*",
-                {
-                    method: "GET",
-                    headers: getSupabaseHeaders()
-                }
-            );
-
-        if (!response.ok) {
-            throw new Error(
-                await response.text()
-            );
-        }
-
-        const products =
-            await response.json();
-
-        if (
-            !products ||
-            products.length === 0
-        ) {
-
-            productsList.innerHTML =
-                "<p>No products available yet.</p>";
-
-            return;
-        }
-
-        productsList.innerHTML =
-            products.map(product => {
-
-                let image =
-                    product.image_url;
-
-                if (
-                    !image &&
-                    product.name &&
-                    product.name
-                        .toLowerCase()
-                        .includes("earbud")
-                ) {
-                    image =
-                        "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=800&q=80";
-                }
-
-                return `
-
-                    <div class="product-card">
-
-                        ${
-                            image
-                            ? `
-                                <img
-                                    class="product-image"
-                                    src="${image}"
-                                    alt="${product.name || "Product"}"
-                                >
-                            `
-                            : ""
-                        }
-
-                        <h3>
-                            ${product.name || "Unnamed Product"}
-                        </h3>
-
-                        <p>
-                            ${product.description || ""}
-                        </p>
-
-                        <div class="product-price">
-                            $${Number(product.price || 0).toFixed(2)}
-                        </div>
-
-                        <div class="stock">
-                            Stock: ${product.stock || 0}
-                        </div>
-
-                        <button
-                            class="buy-btn"
-                            onclick="buyProduct(
-                                '${String(product.name || "Product").replace(/'/g, "\\'")}',
-                                ${Number(product.price || 0)}
-                            )"
-                        >
-                            Buy Now
-                        </button>
-
-                    </div>
-                `;
-
-            }).join("");
-
-    } catch (error) {
-
-        console.error(
-            "Product loading error:",
-            error
-        );
-
-        productsList.innerHTML =
-            "<p>Could not load products.</p>";
-    }
-}
-
-
-// =========================================
-// BUY PRODUCT
-// =========================================
-
-async function buyProduct(
-    name,
-    price
-) {
-
-    const accessToken =
-        localStorage.getItem(
-            "supabase_access_token"
-        );
-
-    if (!accessToken) {
-
-        alert(
-            "Please log in or sign up before placing an order."
-        );
-
-        const authSection =
-            document.getElementById(
-                "auth-section"
-            );
-
-        if (authSection) {
-
-            authSection.style.display =
-                "block";
-
-            authSection.scrollIntoView({
-                behavior: "smooth",
-                block: "center"
-            });
-        }
-
-        return;
-    }
-
-    try {
-
-        const customerName =
-            prompt(
-                "Enter your full name:"
-            );
-
-        if (!customerName) return;
-
-        const customerPhone =
-            prompt(
-                "Enter your phone number:"
-            );
-
-        if (!customerPhone) return;
-
-        const shippingAddress =
-            prompt(
-                "Enter your delivery address:"
-            );
-
-        if (!shippingAddress) return;
-
-        const quantityInput =
-            prompt(
-                "How many do you want?",
-                "1"
-            );
-
-        const quantity =
-            Number(quantityInput);
-
-        if (
-            !Number.isInteger(quantity) ||
-            quantity < 1
-        ) {
-            alert(
-                "Please enter a valid quantity."
-            );
-            return;
-        }
-
-        const totalAmount =
-            Number(price) * quantity;
-
-        const response =
-            await fetch(
-                SUPABASE_URL +
-                "/rest/v1/Orders",
-                {
-                    method: "POST",
-                    headers: {
-                        ...getSupabaseHeaders(),
-                        "Authorization":
-                            "Bearer " +
-                            accessToken
-                    },
-                    body: JSON.stringify({
-                        product_name: name,
-                        quantity,
-                        customer_name:
-                            customerName,
-                        customer_phone:
-                            customerPhone,
-                        shipping_address:
-                            shippingAddress,
-                        total_amount:
-                            totalAmount,
-                        status:
-                            "pending"
-                    })
-                }
-            );
-
-        if (!response.ok) {
-
-            throw new Error(
-                await response.text()
-            );
-        }
-
-        alert(
-            "Order placed successfully! 🎉\n\n" +
-            "Product: " + name + "\n" +
-            "Quantity: " + quantity + "\n" +
-            "Total: $" + totalAmount + "\n\n" +
-            "Thank you, " +
-            customerName +
-            "!"
-        );
-
-    } catch (error) {
-
-        console.error(
-            "Order error:",
-            error
-        );
-
-        alert(
-            "Order failed ❌\n\n" +
-            error.message
-        );
-    }
-}
-
-
-// =========================================
 // PAGE STARTUP
 // =========================================
 
@@ -1228,81 +1382,37 @@ window.addEventListener(
     "DOMContentLoaded",
     async function() {
 
-        const accessToken =
-            localStorage.getItem(
-                "supabase_access_token"
-            );
+        if (isLoggedIn()) {
 
-        if (accessToken) {
+            openHub();
 
-            const authSection =
-                document.getElementById(
-                    "auth-section"
-                );
+            await loadStore();
 
-            const hubSection =
-                document.getElementById(
-                    "hub-section"
-                );
-
-            if (authSection)
-                authSection.style.display =
-                    "none";
-
-            if (hubSection)
-                hubSection.style.display =
-                    "block";
-
-            await loadStoreId();
             await displayProducts();
 
         } else {
 
-            const authSection =
-                document.getElementById(
-                    "auth-section"
-                );
-
-            const hubSection =
-                document.getElementById(
-                    "hub-section"
-                );
-
-            if (authSection)
-                authSection.style.display =
-                    "flex";
-
-            if (hubSection)
-                hubSection.style.display =
-                    "none";
-        }
-
-        // Restore banner preview
-        const savedBanner =
-            localStorage.getItem(
-                "storeBanner"
-            );
-
-        const preview =
             document.getElementById(
-                "bannerPreview"
-            );
+                "auth-section"
+            ).style.display =
+                "flex";
 
-        if (
-            savedBanner &&
-            preview
-        ) {
-
-            preview.innerHTML =
-                '<img src="' +
-                savedBanner +
-                '" alt="Saved Store Banner">';
+            document.getElementById(
+                "hub-section"
+            ).style.display =
+                "none";
         }
-
-        await loadProducts();
     }
 );
 
 
-// Initial login check
-checkLoginStatus();
+// =========================================
+// LOGIN CHECK
+// =========================================
+
+function isLoggedIn() {
+
+    return !!localStorage.getItem(
+        "supabase_access_token"
+    );
+                            }
