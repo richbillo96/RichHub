@@ -2,8 +2,6 @@
 // SUPABASE CONNECTION
 // =========================================
 
-// PUT YOUR REAL SUPABASE VALUES HERE
-
 const SUPABASE_URL =
     "https://tdrelswytmscpnkxmcgw.supabase.co";
 
@@ -18,25 +16,18 @@ const SUPABASE_KEY =
 function getSupabaseHeaders() {
 
     const token =
-        localStorage.getItem(
-            "supabase_access_token"
-        );
+        localStorage.getItem("supabase_access_token");
 
     return {
+        "apikey": SUPABASE_KEY,
 
-        "apikey":
-            SUPABASE_KEY,
+        "Authorization": token
+            ? "Bearer " + token
+            : "Bearer " + SUPABASE_KEY,
 
-        "Authorization":
-            token
-                ? "Bearer " + token
-                : "Bearer " + SUPABASE_KEY,
+        "Content-Type": "application/json",
 
-        "Content-Type":
-            "application/json",
-
-        "Prefer":
-            "return=representation"
+        "Prefer": "return=representation"
     };
 }
 
@@ -47,11 +38,16 @@ function getSupabaseHeaders() {
 
 function getCurrentUser() {
 
-    return JSON.parse(
-        localStorage.getItem(
-            "supabase_user"
-        ) || "{}"
-    );
+    try {
+
+        return JSON.parse(
+            localStorage.getItem("supabase_user") || "{}"
+        );
+
+    } catch (error) {
+
+        return {};
+    }
 }
 
 
@@ -62,9 +58,7 @@ function getCurrentUser() {
 function showAuthMessage(message) {
 
     const box =
-        document.getElementById(
-            "auth-message"
-        );
+        document.getElementById("auth-message");
 
     if (box) {
         box.textContent = message;
@@ -79,15 +73,10 @@ function showAuthMessage(message) {
 async function signUp() {
 
     const email =
-        document
-            .getElementById("auth-email")
-            .value
-            .trim();
+        document.getElementById("auth-email").value.trim();
 
     const password =
-        document
-            .getElementById("auth-password")
-            .value;
+        document.getElementById("auth-password").value;
 
     if (!email || !password) {
 
@@ -100,31 +89,24 @@ async function signUp() {
 
     try {
 
-        const response =
-            await fetch(
-                SUPABASE_URL +
-                "/auth/v1/signup",
-                {
-                    method: "POST",
+        const response = await fetch(
+            SUPABASE_URL + "/auth/v1/signup",
+            {
+                method: "POST",
 
-                    headers: {
-                        "apikey":
-                            SUPABASE_KEY,
+                headers: {
+                    "apikey": SUPABASE_KEY,
+                    "Content-Type": "application/json"
+                },
 
-                        "Content-Type":
-                            "application/json"
-                    },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            }
+        );
 
-                    body:
-                        JSON.stringify({
-                            email,
-                            password
-                        })
-                }
-            );
-
-        const data =
-            await response.json();
+        const data = await response.json();
 
         if (!response.ok) {
 
@@ -132,7 +114,7 @@ async function signUp() {
                 data.msg ||
                 data.message ||
                 data.error_description ||
-                "Sign up failed"
+                "Sign up failed."
             );
         }
 
@@ -150,8 +132,8 @@ async function signUp() {
 
             openHub();
 
+            await loadStoreId();
             await loadStore();
-
             await displayProducts();
 
         } else {
@@ -163,14 +145,9 @@ async function signUp() {
 
     } catch (error) {
 
-        console.error(
-            "Sign up error:",
-            error
-        );
+        console.error("Sign up error:", error);
 
-        showAuthMessage(
-            error.message
-        );
+        showAuthMessage(error.message);
     }
 }
 
@@ -182,15 +159,10 @@ async function signUp() {
 async function logIn() {
 
     const email =
-        document
-            .getElementById("auth-email")
-            .value
-            .trim();
+        document.getElementById("auth-email").value.trim();
 
     const password =
-        document
-            .getElementById("auth-password")
-            .value;
+        document.getElementById("auth-password").value;
 
     if (!email || !password) {
 
@@ -203,38 +175,34 @@ async function logIn() {
 
     try {
 
-        const response =
-            await fetch(
-                SUPABASE_URL +
-                "/auth/v1/token?grant_type=password",
-                {
-                    method: "POST",
+        const response = await fetch(
+            SUPABASE_URL +
+            "/auth/v1/token?grant_type=password",
 
-                    headers: {
-                        "apikey":
-                            SUPABASE_KEY,
+            {
+                method: "POST",
 
-                        "Content-Type":
-                            "application/json"
-                    },
+                headers: {
+                    "apikey": SUPABASE_KEY,
+                    "Content-Type": "application/json"
+                },
 
-                    body:
-                        JSON.stringify({
-                            email,
-                            password
-                        })
-                }
-            );
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            }
+        );
 
-        const data =
-            await response.json();
+        const data = await response.json();
 
         if (!response.ok) {
 
             throw new Error(
                 data.error_description ||
                 data.msg ||
-                "Login failed"
+                data.message ||
+                "Login failed."
             );
         }
 
@@ -250,20 +218,15 @@ async function logIn() {
 
         openHub();
 
+        await loadStoreId();
         await loadStore();
-
         await displayProducts();
 
     } catch (error) {
 
-        console.error(
-            "Login error:",
-            error
-        );
+        console.error("Login error:", error);
 
-        showAuthMessage(
-            error.message
-        );
+        showAuthMessage(error.message);
     }
 }
 
@@ -274,17 +237,21 @@ async function logIn() {
 
 function openHub() {
 
-    document.getElementById(
-        "auth-section"
-    ).style.display = "none";
+    const authSection =
+        document.getElementById("auth-section");
 
-    document.getElementById(
-        "hub-section"
-    ).style.display = "block";
+    const hubSection =
+        document.getElementById("hub-section");
 
-    showDashboard(
-        "overview"
-    );
+    if (authSection) {
+        authSection.style.display = "none";
+    }
+
+    if (hubSection) {
+        hubSection.style.display = "block";
+    }
+
+    showDashboard("overview");
 }
 
 
@@ -306,13 +273,23 @@ function logout() {
         "store_id"
     );
 
-    document.getElementById(
-        "auth-section"
-    ).style.display = "flex";
+    const authSection =
+        document.getElementById("auth-section");
 
-    document.getElementById(
-        "hub-section"
-    ).style.display = "none";
+    const hubSection =
+        document.getElementById("hub-section");
+
+    if (authSection) {
+        authSection.style.display = "flex";
+    }
+
+    if (hubSection) {
+        hubSection.style.display = "none";
+    }
+
+    showAuthMessage(
+        "You have been logged out."
+    );
 }
 
 
@@ -323,14 +300,20 @@ function logout() {
 function togglePassword() {
 
     const password =
-        document.getElementById(
-            "auth-password"
-        );
+        document.getElementById("auth-password");
 
-    password.type =
-        password.type === "password"
-            ? "text"
-            : "password";
+    if (!password) {
+        return;
+    }
+
+    if (password.type === "password") {
+
+        password.type = "text";
+
+    } else {
+
+        password.type = "password";
+    }
 }
 
 
@@ -347,9 +330,7 @@ function loginWithGoogle() {
     window.location.href =
         SUPABASE_URL +
         "/auth/v1/authorize?provider=google&redirect_to=" +
-        encodeURIComponent(
-            redirectTo
-        );
+        encodeURIComponent(redirectTo);
 }
 
 
@@ -360,7 +341,6 @@ function loginWithGoogle() {
 function showDashboard(section) {
 
     const sections = [
-
         "overview",
         "store",
         "store-editor",
@@ -370,26 +350,21 @@ function showDashboard(section) {
         "revenue",
         "ads",
         "settings"
-
     ];
 
-    sections.forEach(
-        function(name) {
+    sections.forEach(function(name) {
 
-            const element =
-                document.getElementById(
-                    name
-                );
+        const element =
+            document.getElementById(name);
 
-            if (element) {
+        if (element) {
 
-                element.style.display =
-                    name === section
-                        ? "block"
-                        : "none";
-            }
+            element.style.display =
+                name === section
+                    ? "block"
+                    : "none";
         }
-    );
+    });
 
     if (section === "products") {
 
@@ -408,20 +383,146 @@ function showDashboard(section) {
 // =========================================
 
 function editStore() {
-    const user = getCurrentUser();
+
+    const user =
+        getCurrentUser();
 
     if (!user.id) {
+
         alert("Please log in first.");
+
         return;
     }
 
+    createStoreEditor();
+
     showDashboard("store-editor");
+
     loadStore();
 }
-  await lstore-editor
-    showDashboard(
-        "store-editor"
-    );
+
+
+// =========================================
+// CREATE STORE EDITOR
+// =========================================
+
+function createStoreEditor() {
+
+    if (
+        document.getElementById("store-editor")
+    ) {
+        return;
+    }
+
+    const main =
+        document.querySelector(".dashboard-content");
+
+    if (!main) {
+        return;
+    }
+
+    const editor =
+        document.createElement("section");
+
+    editor.id = "store-editor";
+
+    editor.className =
+        "dashboard-page";
+
+    editor.style.display = "none";
+
+    editor.innerHTML = `
+
+        <div class="store-header">
+
+            <div>
+                <h2>✏️ Edit Your Store</h2>
+
+                <p>
+                    Change your store information.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label for="storeName">
+                Store Name
+            </label>
+
+            <input
+                id="storeName"
+                type="text"
+                placeholder="Enter your store name"
+            >
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label for="storeDescription">
+                Store Description
+            </label>
+
+            <textarea
+                id="storeDescription"
+                placeholder="Enter your store description"
+                rows="5"
+            ></textarea>
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label for="storeBanner">
+                Store Banner
+            </label>
+
+            <input
+                id="storeBanner"
+                type="file"
+                accept="image/*"
+                onchange="previewBanner(this)"
+            >
+
+        </div>
+
+
+        <div
+            id="bannerPreview"
+            class="store-banner"
+        >
+            <span>
+                🖼️ Your Store Banner
+            </span>
+        </div>
+
+
+        <br>
+
+
+        <button
+            type="button"
+            onclick="saveEditedStore()"
+        >
+            💾 Save Store
+        </button>
+
+
+        <button
+            type="button"
+            onclick="showDashboard('store')"
+        >
+            ← Back to Store
+        </button>
+
+    `;
+
+    main.appendChild(editor);
 }
 
 
@@ -469,7 +570,6 @@ async function loadStore() {
             await response.json();
 
         if (!stores.length) {
-
             return;
         }
 
@@ -482,9 +582,7 @@ async function loadStore() {
         );
 
         const nameInput =
-            document.getElementById(
-                "storeName"
-            );
+            document.getElementById("storeName");
 
         const descriptionInput =
             document.getElementById(
@@ -529,6 +627,11 @@ async function loadStore() {
 
         if (store.banner_url) {
 
+            localStorage.setItem(
+                "storeBanner",
+                store.banner_url
+            );
+
             const preview =
                 document.getElementById(
                     "bannerPreview"
@@ -560,26 +663,28 @@ async function loadStore() {
 
 async function saveEditedStore() {
 
+    const nameInput =
+        document.getElementById("storeName");
+
+    const descriptionInput =
+        document.getElementById(
+            "storeDescription"
+        );
+
+    if (!nameInput || !descriptionInput) {
+
+        alert(
+            "Store editor could not be loaded."
+        );
+
+        return;
+    }
+
     const storeName =
-        document
-            .getElementById(
-                "storeName"
-            )
-            .value
-            .trim();
+        nameInput.value.trim();
 
     const storeDescription =
-        document
-            .getElementById(
-                "storeDescription"
-            )
-            .value
-            .trim();
-
-    const bannerInput =
-        document.getElementById(
-            "storeBanner"
-        );
+        descriptionInput.value.trim();
 
     if (!storeName) {
 
@@ -599,55 +704,8 @@ async function saveEditedStore() {
         return;
     }
 
-
-    let banner =
-        localStorage.getItem(
-            "storeBanner"
-        ) || null;
-
-
-    if (
-        bannerInput &&
-        bannerInput.files &&
-        bannerInput.files[0]
-    ) {
-
-        const file =
-            bannerInput.files[0];
-
-        if (
-            !file.type.startsWith(
-                "image/"
-            )
-        ) {
-
-            alert(
-                "Please select an image."
-            );
-
-            return;
-        }
-
-        banner =
-            await readFileAsDataURL(
-                file
-            );
-
-        localStorage.setItem(
-            "storeBanner",
-            banner
-        );
-    }
-
-
-    const storeId =
-        localStorage.getItem(
-            "store_id"
-        );
-
     const user =
         getCurrentUser();
-
 
     if (!user.id) {
 
@@ -658,8 +716,58 @@ async function saveEditedStore() {
         return;
     }
 
+    const bannerInput =
+        document.getElementById(
+            "storeBanner"
+        );
+
+    let banner =
+        localStorage.getItem(
+            "storeBanner"
+        ) || null;
 
     try {
+
+        if (
+            bannerInput &&
+            bannerInput.files &&
+            bannerInput.files[0]
+        ) {
+
+            const file =
+                bannerInput.files[0];
+
+            if (
+                !file.type.startsWith("image/")
+            ) {
+
+                alert(
+                    "Please select an image."
+                );
+
+                return;
+            }
+
+            banner =
+                await readFileAsDataURL(file);
+
+            localStorage.setItem(
+                "storeBanner",
+                banner
+            );
+        }
+
+
+        let storeId =
+            localStorage.getItem("store_id");
+
+
+        if (!storeId) {
+
+            storeId =
+                await loadStoreId();
+        }
+
 
         let response;
 
@@ -673,9 +781,7 @@ async function saveEditedStore() {
 
                     SUPABASE_URL +
                     "/rest/v1/stores?id=eq." +
-                    encodeURIComponent(
-                        storeId
-                    ),
+                    encodeURIComponent(storeId),
 
                     {
                         method: "PATCH",
@@ -700,8 +806,7 @@ async function saveEditedStore() {
 
         }
 
-
-        // CREATE STORE
+        // CREATE NEW STORE
 
         else {
 
@@ -751,6 +856,7 @@ async function saveEditedStore() {
 
         if (
             !storeId &&
+            result &&
             result.length &&
             result[0].id
         ) {
@@ -762,17 +868,27 @@ async function saveEditedStore() {
         }
 
 
-        // UPDATE DISPLAY
+        const nameDisplay =
+            document.getElementById(
+                "storeNameDisplay"
+            );
 
-        document.getElementById(
-            "storeNameDisplay"
-        ).textContent =
-            storeName;
+        const descriptionDisplay =
+            document.getElementById(
+                "storeDescriptionDisplay"
+            );
 
-        document.getElementById(
-            "storeDescriptionDisplay"
-        ).textContent =
-            storeDescription;
+        if (nameDisplay) {
+
+            nameDisplay.textContent =
+                storeName;
+        }
+
+        if (descriptionDisplay) {
+
+            descriptionDisplay.textContent =
+                storeDescription;
+        }
 
 
         alert(
@@ -780,10 +896,7 @@ async function saveEditedStore() {
         );
 
 
-        showDashboard(
-            "store"
-        );
-
+        showDashboard("store");
 
     } catch (error) {
 
@@ -801,40 +914,36 @@ async function saveEditedStore() {
 
 
 // =========================================
-// FILE READER
+// READ IMAGE
 // =========================================
 
 function readFileAsDataURL(file) {
 
-    return new Promise(
-        function(resolve, reject) {
+    return new Promise(function(resolve, reject) {
 
-            const reader =
-                new FileReader();
+        const reader =
+            new FileReader();
 
-            reader.onload =
-                function(event) {
+        reader.onload =
+            function(event) {
 
-                    resolve(
-                        event.target.result
-                    );
-                };
+                resolve(
+                    event.target.result
+                );
+            };
 
-            reader.onerror =
-                function() {
+        reader.onerror =
+            function() {
 
-                    reject(
-                        new Error(
-                            "Could not read image."
-                        )
-                    );
-                };
+                reject(
+                    new Error(
+                        "Could not read image."
+                    )
+                );
+            };
 
-            reader.readAsDataURL(
-                file
-            );
-        }
-    );
+        reader.readAsDataURL(file);
+    });
 }
 
 
@@ -857,7 +966,6 @@ function previewBanner(input) {
         !input.files ||
         !input.files[0]
     ) {
-
         return;
     }
 
@@ -865,9 +973,7 @@ function previewBanner(input) {
         input.files[0];
 
     if (
-        !file.type.startsWith(
-            "image/"
-        )
+        !file.type.startsWith("image/")
     ) {
 
         preview.innerHTML =
@@ -889,9 +995,7 @@ function previewBanner(input) {
                 >`;
         };
 
-    reader.readAsDataURL(
-        file
-    );
+    reader.readAsDataURL(file);
 }
 
 
@@ -929,6 +1033,7 @@ async function loadStoreId() {
         if (!response.ok) {
 
             console.error(
+                "Store lookup error:",
                 await response.text()
             );
 
@@ -969,9 +1074,7 @@ async function loadStoreId() {
 async function addProduct() {
 
     const name =
-        prompt(
-            "Enter product name:"
-        );
+        prompt("Enter product name:");
 
     if (!name || !name.trim()) {
         return;
@@ -979,9 +1082,7 @@ async function addProduct() {
 
 
     const price =
-        prompt(
-            "Enter product price:"
-        );
+        prompt("Enter product price:");
 
     if (
         !price ||
@@ -1016,7 +1117,6 @@ async function addProduct() {
             "Enter product stock:",
             "10"
         );
-
 
     if (
         stockInput === null ||
@@ -1088,9 +1188,7 @@ async function addProduct() {
                                 null,
 
                             stock:
-                                Number(
-                                    stockInput
-                                )
+                                Number(stockInput)
                         })
                 }
             );
@@ -1176,9 +1274,7 @@ async function displayProducts() {
 
                 SUPABASE_URL +
                 "/rest/v1/product?store_id=eq." +
-                encodeURIComponent(
-                    storeId
-                ) +
+                encodeURIComponent(storeId) +
                 "&select=*",
 
                 {
@@ -1223,70 +1319,63 @@ async function displayProducts() {
         grid.innerHTML = "";
 
 
-        products.forEach(
-            function(product) {
+        products.forEach(function(product) {
 
-                const card =
-                    document.createElement(
-                        "div"
-                    );
+            const card =
+                document.createElement("div");
 
-                card.className =
-                    "product-card";
+            card.className =
+                "product-card";
 
 
-                card.innerHTML = `
+            card.innerHTML = `
 
-                    ${
-                        product.image_url
+                ${
+                    product.image_url
 
-                        ? `
-                            <img
-                                class="product-image"
-                                src="${product.image_url}"
-                                alt="${product.name}"
-                            >
-                        `
+                    ? `
+                        <img
+                            class="product-image"
+                            src="${product.image_url}"
+                            alt="${product.name || "Product"}"
+                        >
+                    `
 
-                        : `
-                            <div class="product-image">
-                                📦
-                            </div>
-                        `
-                    }
+                    : `
+                        <div class="product-image">
+                            📦
+                        </div>
+                    `
+                }
 
-                    <h3>
-                        ${product.name}
-                    </h3>
+                <h3>
+                    ${product.name || "Unnamed Product"}
+                </h3>
 
-                    <p>
-                        ${product.description || ""}
-                    </p>
+                <p>
+                    ${product.description || ""}
+                </p>
 
-                    <strong>
-                        $${Number(
-                            product.price
-                        ).toFixed(2)}
-                    </strong>
+                <strong>
+                    $${Number(
+                        product.price || 0
+                    ).toFixed(2)}
+                </strong>
 
-                    <p>
-                        Stock:
-                        ${product.stock}
-                    </p>
+                <p>
+                    Stock: ${product.stock || 0}
+                </p>
 
-                    <button
-                        onclick="deleteProduct('${product.id}')"
-                    >
-                        🗑️ Delete
-                    </button>
-                `;
+                <button
+                    onclick="deleteProduct('${product.id}')"
+                >
+                    🗑️ Delete
+                </button>
+            `;
 
 
-                grid.appendChild(
-                    card
-                );
-            }
-        );
+            grid.appendChild(card);
+        });
 
     } catch (error) {
 
@@ -1312,12 +1401,13 @@ async function deleteProduct(id) {
     }
 
 
-    if (
-        !confirm(
+    const confirmed =
+        confirm(
             "Are you sure you want to delete this product?"
-        )
-    ) {
+        );
 
+
+    if (!confirmed) {
         return;
     }
 
@@ -1382,21 +1472,33 @@ window.addEventListener(
 
             openHub();
 
+            await loadStoreId();
             await loadStore();
-
             await displayProducts();
 
         } else {
 
-            document.getElementById(
-                "auth-section"
-            ).style.display =
-                "flex";
+            const authSection =
+                document.getElementById(
+                    "auth-section"
+                );
 
-            document.getElementById(
-                "hub-section"
-            ).style.display =
-                "none";
+            const hubSection =
+                document.getElementById(
+                    "hub-section"
+                );
+
+            if (authSection) {
+
+                authSection.style.display =
+                    "flex";
+            }
+
+            if (hubSection) {
+
+                hubSection.style.display =
+                    "none";
+            }
         }
     }
 );
@@ -1411,4 +1513,4 @@ function isLoggedIn() {
     return !!localStorage.getItem(
         "supabase_access_token"
     );
-                            }
+        }
