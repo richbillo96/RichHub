@@ -460,35 +460,3 @@ function editStore() {
     document.querySelector(".store-info button").textContent = "✅ Store Saved";
 }
 
-
-// ===============================
-// STORE BANNER PREVIEW
-// ===============================
-
-const storeBanner = document.getElementById("storeBanner");
-const bannerPreview = document.getElementById("bannerPreview");
-
-if (storeBanner && bannerPreview) {
-
-  storeBanner.addEventListener("change", function () {
-
-    const file = this.files[0];
-
-    if (!file) {
-      bannerPreview.innerHTML = "<span>No image selected</span>";
-      return;
-    }
-
-    if (!file.type.startsWith("image/")) {
-      bannerPreview.innerHTML = "<span>Please choose an image.</span>";
-      return;
-    }
-
-    const imageURL = URL.createObjectURL(file);
-
-    bannerPreview.innerHTML = `
-      <img src="${imageURL}" alt="Store banner preview">
-    `;
-  });
-
-        }
