@@ -699,6 +699,7 @@ async function loadStoreId() {
     }
   } catch (e) {
     console.error("Could not load store:", e);
+    alert(`error${e}`);        
   }
 }
 
