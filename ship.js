@@ -460,3 +460,28 @@ function editStore() {
     document.querySelector(".store-info button").textContent = "✅ Store Saved";
 }
 
+function previewBanner(input) {
+    const preview = document.getElementById("bannerPreview");
+
+    if (!input.files || !input.files[0]) {
+        preview.innerHTML = "<span>No image selected</span>";
+        return;
+    }
+
+    const file = input.files[0];
+
+    if (!file.type.startsWith("image/")) {
+        preview.innerHTML = "<span>Please select an image.</span>";
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+        preview.innerHTML =
+            '<img src="' + event.target.result + '" alt="Store Banner">';
+    };
+
+    reader.readAsDataURL(file);
+                }
+
