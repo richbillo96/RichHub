@@ -538,58 +538,73 @@ async function addProduct() {
   }
 
   const description = prompt("Enter product description:");
-  if (!description) return;
+  if (!description || !description.trim()) return;
 
-  // Get the store_id you created in Supabase
+  const stockInput = prompt("Enter product stock:", "10");
+  if (stockInput === null || isNaN(stockInput)) {
+    alert("Please enter a valid stock amount.");
+    return;
+  }
+
   const storeId = localStorage.getItem("store_id");
+
   if (!storeId) {
-    alert("No store found. Go to your Store tab and save your store first.");
+    alert("No store found. Please save your store first.");
     return;
   }
 
   const productPayload = {
     store_id: storeId,
     name: name.trim(),
-    price: Number(price),
     description: description.trim(),
+    price: Number(price),
     image_url: null,
-    stock: 10
+    stock: Number(stockInput)
   };
 
   try {
     const response = await fetch(
-      SUPABASE_URL + "/rest/v1/products",
+      SUPABASE_URL + "/rest/v1/product",
       {
         method: "POST",
-        headers: getSupabaseHeaders(),
+        headers: {
+          ...getSupabaseHeaders(),
+          "Prefer": "return=representation"
+        },
         body: JSON.stringify(productPayload)
       }
     );
 
     if (!response.ok) {
-      const err = await response.json();
-      console.error("Supabase error:", err);
-      alert("Failed to save product to Supabase.");
+      const errorText = await response.text();
+      console.error("Supabase error:", errorText);
+      alert("❌ Failed to save product to Supabase.");
       return;
     }
 
     const saved = await response.json();
-    const product = saved[0] || { ...productPayload, id: Date.now() };
 
-    // Keep localStorage as backup/cache
-    let products = JSON.parse(localStorage.getItem("richhub_products") || "[]");
-    products.push(product);
-    localStorage.setItem("richhub_products", JSON.stringify(products));
+    console.log("Product saved:", saved);
+
+    // Keep a local copy as backup
+    const products = JSON.parse(
+      localStorage.getItem("richhub_products") || "[]"
+    );
+
+    products.push(saved[0]);
+    localStorage.setItem(
+      "richhub_products",
+      JSON.stringify(products)
+    );
 
     displayProducts();
+
     alert("✅ Product added successfully!");
-  } catch (err) {
-    console.error(err);
-    alert("Network error. Product not saved.");
+  } catch (error) {
+    console.error("Product error:", error);
+    alert("❌ Something went wrong while saving the product.");
   }
 }
-
-
 
 // =========================================
 // DISPLAY PRODUCTS
