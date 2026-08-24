@@ -510,3 +510,135 @@ window.addEventListener("DOMContentLoaded", function () {
             '<img src="' + savedBanner + '" alt="Saved Store Banner">';
     }
 });
+
+// =========================================
+// ADD PRODUCT
+// =========================================
+
+function addProduct() {
+    const name = prompt("Enter product name:");
+
+    if (!name || !name.trim()) {
+        return;
+    }
+
+    const price = prompt("Enter product price:");
+
+    if (!price || isNaN(price)) {
+        alert("Please enter a valid price.");
+        return;
+    }
+
+    const description = prompt("Enter product description:");
+
+    if (!description) {
+        return;
+    }
+
+    const product = {
+        id: Date.now(),
+        name: name.trim(),
+        price: Number(price),
+        description: description.trim()
+    };
+
+    let products = JSON.parse(localStorage.getItem("richhub_products") || "[]");
+
+    products.push(product);
+
+    localStorage.setItem("richhub_products", JSON.stringify(products));
+
+    displayProducts();
+
+    alert("✅ Product added successfully!");
+}
+
+
+// =========================================
+// DISPLAY PRODUCTS
+// =========================================
+
+function displayProducts() {
+    const productsGrid = document.getElementById("products-grid");
+
+    if (!productsGrid) {
+        return;
+    }
+
+    const products = JSON.parse(
+        localStorage.getItem("richhub_products") || "[]"
+    );
+
+    if (products.length === 0) {
+        productsGrid.innerHTML = `
+            <div class="products-empty">
+                <div>📦</div>
+                <h3>No products yet</h3>
+                <p>Add your first product to start selling.</p>
+
+                <button onclick="addProduct()">
+                    ＋ Add Your First Product
+                </button>
+            </div>
+        `;
+
+        return;
+    }
+
+    productsGrid.innerHTML = "";
+
+    products.forEach(product => {
+
+        const card = document.createElement("div");
+
+        card.className = "product-card";
+
+        card.innerHTML = `
+            <div class="product-image">
+                📦
+            </div>
+
+            <h3>${product.name}</h3>
+
+            <p>${product.description}</p>
+
+            <strong>$${product.price.toFixed(2)}</strong>
+
+            <button onclick="deleteProduct(${product.id})">
+                🗑️ Delete
+            </button>
+        `;
+
+        productsGrid.appendChild(card);
+    });
+}
+
+
+// =========================================
+// DELETE PRODUCT
+// =========================================
+
+function deleteProduct(id) {
+
+    let products = JSON.parse(
+        localStorage.getItem("richhub_products") || "[]"
+    );
+
+    products = products.filter(product => product.id !== id);
+
+    localStorage.setItem(
+        "richhub_products",
+        JSON.stringify(products)
+    );
+
+    displayProducts();
+}
+
+
+// =========================================
+// LOAD PRODUCTS WHEN PAGE OPENS
+// =========================================
+
+window.addEventListener("DOMContentLoaded", function () {
+    displayProducts();
+});
