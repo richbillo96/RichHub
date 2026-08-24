@@ -679,3 +679,26 @@ function deleteProduct(id) {
 window.addEventListener("DOMContentLoaded", function () {
     displayProducts();
 });
+
+// Auto-fetch store_id when page loads
+async function loadStoreId() {
+  const user = JSON.parse(localStorage.getItem("supabase_user") || "{}");
+  if (!user.id) return;
+
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/stores?user_id=eq.${user.id}&select=id`,
+      { headers: getSupabaseHeaders() }
+    );
+    const stores = await res.json();
+    if (stores[0]) {
+      localStorage.setItem("store_id", stores[0].id);
+      console.log("Store ID loaded:", stores[0].id);
+    }
+  } catch (e) {
+    console.error("Could not load store:", e);
+  }
+}
+
+loadStoreId();
+
