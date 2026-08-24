@@ -189,45 +189,123 @@
 
 
     <!-- STORE -->
-<!-- STORE -->
-<section id="store" class="dashboard-page" style="display:none;">
-    <h2>🛍️ My Store</h2>
-    <p>Manage your online store here.</p>
 
-    <div class="store-info">
-        <label for="storeName">🏪 Store Name</label>
-        <input
-            type="text"
-            id="storeName"
-            placeholder="Enter your store name"
-            value="RichHub"
-        >
+      <section id="store" class="dashboard-page" style="display:none;">
 
-        <label for="storeDescription">📝 Store Description</label>
-        <textarea
-            id="storeDescription"
-            placeholder="Describe your store"
-        >Your trusted online store for quality products.</textarea>
+    <div class="store-header">
+        <div>
+            <h2>🛍️ My Store</h2>
+            <p>Manage your online store and products from one place.</p>
+        </div>
 
-        <label for="storeBanner">🖼️ Store Image / Banner</label>
-        <input
-            type="file"
-            id="storeBanner"
-            accept="image/*"
-            onchange="previewBanner(this)"
-        >
-   <div id="bannerPreview" class="banner-preview">
-  <span>No image selected</span>
-   </div>
-        
-        <button type="button" onclick="editStore()">
+        <button type="button" class="edit-store-btn" onclick="editStore()">
             ✏️ Edit Store
         </button>
     </div>
-</section>
 
+    <!-- STORE PROFILE -->
+    <div class="store-profile">
 
-    <!-- PRODUCTS -->
+        <div class="store-banner" id="bannerPreview">
+            <span>🖼️ Your Store Banner</span>
+        </div>
+
+        <div class="store-details">
+
+            <div class="store-logo">
+                🛍️
+            </div>
+
+            <div class="store-text">
+                <h2 id="storeNameDisplay">RichHub Store</h2>
+
+                <p id="storeDescriptionDisplay">
+                    Your trusted online store for quality products.
+                </p>
+
+                <span class="store-status">
+                    🟢 Active
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- STORE STATISTICS -->
+    <div class="store-stats">
+
+        <div class="store-stat-card">
+            <span>📦</span>
+            <div>
+                <small>Total Products</small>
+                <strong id="storeProductCount">0</strong>
+            </div>
+        </div>
+
+        <div class="store-stat-card">
+            <span>🛒</span>
+            <div>
+                <small>Total Orders</small>
+                <strong id="storeOrderCount">0</strong>
+            </div>
+        </div>
+
+        <div class="store-stat-card">
+            <span>👥</span>
+            <div>
+                <small>Total Customers</small>
+                <strong id="storeCustomerCount">0</strong>
+            </div>
+        </div>
+
+        <div class="store-stat-card">
+            <span>💰</span>
+            <div>
+                <small>Total Revenue</small>
+                <strong id="storeRevenue">$0.00</strong>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- STORE PRODUCTS -->
+    <div class="store-products-header">
+
+        <div>
+            <h2>📦 Your Products</h2>
+            <p>Products customers can buy from your store.</p>
+        </div>
+
+        <button type="button" class="add-product-btn"
+                onclick="showDashboard('products')">
+            ＋ Add Product
+        </button>
+
+    </div>
+
+    <div class="store-product-box">
+
+        <div class="empty-store">
+            <div>📦</div>
+
+            <h3>No products yet</h3>
+
+            <p>
+                Add your first product and start selling on RichHub.
+            </p>
+
+            <button type="button"
+                    onclick="showDashboard('products')">
+                ＋ Add Your First Product
+            </button>
+        </div>
+
+    </div>
+
+    </section>
+      
+!-- PRODUCTS -->
     <section id="products" class="dashboard-page" style="display:none;">
       <h2>📦 Products</h2>
       <p>Add, edit and manage your products.</p>
