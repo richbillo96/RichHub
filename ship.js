@@ -459,3 +459,30 @@ function editStore() {
 
     document.querySelector(".store-info button").textContent = "✅ Store Saved";
 }
+
+
+/* ===============================
+   STORE BANNER PREVIEW
+   =============================== */
+
+.banner-preview {
+  width: 100%;
+  max-width: 600px;
+  height: 220px;
+  margin: 15px 0;
+  border-radius: 16px;
+  border: 2px dashed rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+  color: #aaa;
+  text-align: center;
+}
+
+.banner-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+              }
