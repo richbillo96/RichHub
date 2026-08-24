@@ -307,14 +307,33 @@
       
 !-- PRODUCTS -->
     <section id="products" class="dashboard-page" style="display:none;">
-      <h2>📦 Products</h2>
-      <p>Add, edit and manage your products.</p>
 
-      <button onclick="addProduct()">
-        ➕ Add Product
-      </button>
+    <div class="products-header">
+        <div>
+            <h2>📦 Products</h2>
+            <p>Add and manage everything you sell on RichHub.</p>
+        </div>
+
+        <button class="add-product-main-btn" onclick="addProduct()">
+            ＋ Add Product
+        </button>
+    </div>
+
+    <div class="products-grid" id="products-grid">
+
+        <div class="products-empty">
+            <div>📦</div>
+            <h3>No products yet</h3>
+            <p>Add your first product to start selling.</p>
+
+            <button onclick="addProduct()">
+                ＋ Add Your First Product
+            </button>
+        </div>
+
+    </div>
+
     </section>
-
 
     <!-- ORDERS -->
     <section id="orders" class="dashboard-page" style="display:none;">
