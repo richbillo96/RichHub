@@ -702,3 +702,49 @@ async function loadStoreId() {
 
 loadStoreId();
 
+async function saveStoreToSupabase() {
+  const user = JSON.parse(localStorage.getItem("supabase_user") || "{}");
+  if (!user.id) {
+    alert("You must be logged in.");
+    return;
+  }
+
+  // Get store info from your existing localStorage
+  const name = localStorage.getItem("storeName") || "My Store";
+  const description = localStorage.getItem("storeDescription") || "";
+  const banner = localStorage.getItem("storeBanner") || null;
+
+  const payload = {
+    user_id: user.id,
+    name: name,
+    description: description,
+    banner_url: banner
+  };
+
+  try {
+    const response = await fetch(
+      SUPABASE_URL + "/rest/v1/stores",
+      {
+        method: "POST",
+        headers: getSupabaseHeaders(),
+        body: JSON.stringify(payload)
+      }
+    );
+
+    if (!response.ok) {
+      const err = await response.json();
+      console.error(err);
+      alert("Failed to save store.");
+      return;
+    }
+
+    const data = await response.json();
+    const storeId = data[0].id;
+    localStorage.setItem("store_id", storeId);
+
+    alert("✅ Store saved! Now you can add products.");
+  } catch (e) {
+    console.error(e);
+    alert("Error saving store.");
+  }
+}
