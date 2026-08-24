@@ -4,6 +4,18 @@ const SUPABASE_URL =
         const SUPABASE_KEY =
             "sb_publishable_t09l4fnt9ZGfnsc5bzxSdA_s64P1y_q";
 
+
+function getSupabaseHeaders() {
+  const token = localStorage.getItem("supabase_access_token");
+  return {
+    "apikey": SUPABASE_KEY,
+    "Authorization": token ? `Bearer ${token}` : `Bearer ${SUPABASE_KEY}`,
+    "Content-Type": "application/json",
+    "Prefer": "return=representation"
+  };
+}
+
+
 // ===============================
 // AUTHENTICATION
 // ===============================
@@ -515,43 +527,68 @@ window.addEventListener("DOMContentLoaded", function () {
 // ADD PRODUCT
 // =========================================
 
-function addProduct() {
-    const name = prompt("Enter product name:");
+async function addProduct() {
+  const name = prompt("Enter product name:");
+  if (!name || !name.trim()) return;
 
-    if (!name || !name.trim()) {
-        return;
+  const price = prompt("Enter product price:");
+  if (!price || isNaN(price)) {
+    alert("Please enter a valid price.");
+    return;
+  }
+
+  const description = prompt("Enter product description:");
+  if (!description) return;
+
+  // Get the store_id you created in Supabase
+  const storeId = localStorage.getItem("store_id");
+  if (!storeId) {
+    alert("No store found. Go to your Store tab and save your store first.");
+    return;
+  }
+
+  const productPayload = {
+    store_id: storeId,
+    name: name.trim(),
+    price: Number(price),
+    description: description.trim(),
+    image_url: null,
+    stock: 10
+  };
+
+  try {
+    const response = await fetch(
+      SUPABASE_URL + "/rest/v1/products",
+      {
+        method: "POST",
+        headers: getSupabaseHeaders(),
+        body: JSON.stringify(productPayload)
+      }
+    );
+
+    if (!response.ok) {
+      const err = await response.json();
+      console.error("Supabase error:", err);
+      alert("Failed to save product to Supabase.");
+      return;
     }
 
-    const price = prompt("Enter product price:");
+    const saved = await response.json();
+    const product = saved[0] || { ...productPayload, id: Date.now() };
 
-    if (!price || isNaN(price)) {
-        alert("Please enter a valid price.");
-        return;
-    }
-
-    const description = prompt("Enter product description:");
-
-    if (!description) {
-        return;
-    }
-
-    const product = {
-        id: Date.now(),
-        name: name.trim(),
-        price: Number(price),
-        description: description.trim()
-    };
-
+    // Keep localStorage as backup/cache
     let products = JSON.parse(localStorage.getItem("richhub_products") || "[]");
-
     products.push(product);
-
     localStorage.setItem("richhub_products", JSON.stringify(products));
 
     displayProducts();
-
     alert("✅ Product added successfully!");
+  } catch (err) {
+    console.error(err);
+    alert("Network error. Product not saved.");
+  }
 }
+
 
 
 // =========================================
