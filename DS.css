@@ -947,3 +947,269 @@ a {
   height: 100%;
   object-fit: cover;
 }
+/* =========================================
+   RICHHUB STORE PAGE
+   ========================================= */
+
+.store-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.store-header h2 {
+    margin: 0 0 8px;
+    font-size: 32px;
+    color: #ffffff;
+}
+
+.store-header p {
+    margin: 0;
+    color: #8f9aaa;
+    font-size: 15px;
+}
+
+.edit-store-btn,
+.add-product-btn {
+    border: 0;
+    border-radius: 10px;
+    padding: 13px 20px;
+    background: #6c63ff;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.edit-store-btn:hover,
+.add-product-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(108, 99, 255, 0.3);
+}
+
+
+/* STORE PROFILE */
+
+.store-profile {
+    position: relative;
+    overflow: hidden;
+    min-height: 260px;
+    margin-bottom: 22px;
+    border: 1px solid #293443;
+    border-radius: 18px;
+    background: #111923;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+}
+
+.store-banner {
+    height: 145px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(108, 99, 255, 0.35), transparent 40%),
+        linear-gradient(135deg, #191c48, #101620);
+    color: #8f9aaa;
+    font-size: 15px;
+}
+
+.store-details {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 0 25px 25px;
+}
+
+.store-logo {
+    width: 95px;
+    height: 95px;
+    margin-top: -45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 3px solid #111923;
+    border-radius: 18px;
+    background: #6c63ff;
+    font-size: 40px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+}
+
+.store-text h2 {
+    margin: 8px 0;
+    color: #ffffff;
+    font-size: 25px;
+}
+
+.store-text p {
+    margin: 0 0 12px;
+    color: #8f9aaa;
+    font-size: 14px;
+}
+
+.store-status {
+    display: inline-block;
+    padding: 5px 11px;
+    border-radius: 20px;
+    background: rgba(0, 200, 120, 0.12);
+    color: #38d996;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+/* STORE STATISTICS */
+
+.store-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.store-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px;
+    border: 1px solid #293443;
+    border-radius: 15px;
+    background: #111923;
+}
+
+.store-stat-card > span {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(108, 99, 255, 0.15);
+    font-size: 21px;
+}
+
+.store-stat-card small {
+    display: block;
+    margin-bottom: 5px;
+    color: #8f9aaa;
+    font-size: 12px;
+}
+
+.store-stat-card strong {
+    color: #ffffff;
+    font-size: 22px;
+}
+
+
+/* PRODUCTS HEADER */
+
+.store-products-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.store-products-header h2 {
+    margin: 0 0 5px;
+    color: #ffffff;
+    font-size: 22px;
+}
+
+.store-products-header p {
+    margin: 0;
+    color: #8f9aaa;
+    font-size: 13px;
+}
+
+
+/* PRODUCTS BOX */
+
+.store-product-box {
+    min-height: 220px;
+    border: 1px solid #293443;
+    border-radius: 15px;
+    background: #111923;
+}
+
+.empty-store {
+    padding: 50px 20px;
+    text-align: center;
+}
+
+.empty-store > div {
+    margin-bottom: 10px;
+    font-size: 42px;
+}
+
+.empty-store h3 {
+    margin: 0 0 8px;
+    color: #ffffff;
+    font-size: 19px;
+}
+
+.empty-store p {
+    margin: 0 0 20px;
+    color: #8f9aaa;
+    font-size: 14px;
+}
+
+.empty-store button {
+    border: 0;
+    border-radius: 9px;
+    padding: 12px 18px;
+    background: #6c63ff;
+    color: #ffffff;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.empty-store button:hover {
+    transform: translateY(-2px);
+}
+
+
+/* MOBILE */
+
+@media (max-width: 800px) {
+
+    .store-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .store-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .store-details {
+        align-items: flex-start;
+    }
+
+}
+
+@media (max-width: 500px) {
+
+    .store-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .store-details {
+        flex-direction: column;
+    }
+
+    .store-logo {
+        margin-top: -35px;
+    }
+
+    .store-products-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+   }
