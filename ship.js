@@ -773,3 +773,55 @@ function injectStoreSaveButton() {
 
 // Check every second for the Store tab to appear
 setInterval(injectStoreSaveButton, 1000);
+
+async function saveStoreToSupabase() {
+  const user = JSON.parse(localStorage.getItem("supabase_user") || "{}");
+  if (!user.id) {
+    alert("You must be logged in.");
+    return;
+  }
+
+  const name = localStorage.getItem("storeName") || prompt("Enter store name:");
+  const description = localStorage.getItem("storeDescription") || prompt("Enter store description:");
+  const banner = localStorage.getItem("storeBanner") || null;
+
+  if (!name) {
+    alert("Store name is required.");
+    return;
+  }
+
+  const payload = {
+    user_id: user.id,
+    name: name,
+    description: description,
+    banner_url: banner
+  };
+
+  try {
+    const response = await fetch(
+      SUPABASE_URL + "/rest/v1/stores",
+      {
+        method: "POST",
+        headers: getSupabaseHeaders(),
+        body: JSON.stringify(payload)
+      }
+    );
+
+    if (!response.ok) {
+      const err = await response.json();
+      console.error(err);
+      alert("Failed to save store. Check console.");
+      return;
+    }
+
+    const data = await response.json();
+    const storeId = data[0].id;
+    localStorage.setItem("store_id", storeId);
+
+    alert("✅ Store saved to Supabase! Now you can add products.");
+  } catch (e) {
+    console.error(e);
+    alert("Error saving store.");
+  }
+}
+
