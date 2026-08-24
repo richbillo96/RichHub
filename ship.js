@@ -407,22 +407,18 @@ function showDashboard(section) {
 // EDIT STORE
 // =========================================
 
-async function editStore() {
-
-    const user =
-        getCurrentUser();
+function editStore() {
+    const user = getCurrentUser();
 
     if (!user.id) {
-
-        alert(
-            "Please log in first."
-        );
-
+        alert("Please log in first.");
         return;
     }
 
-    await loadStore();
-
+    showDashboard("store-editor");
+    loadStore();
+}
+  await lstore-editor
     showDashboard(
         "store-editor"
     );
