@@ -437,3 +437,25 @@ function showDashboard(section) {
         }
         });
 }
+
+function editStore() {
+    const storeName = document.getElementById("storeName").value.trim();
+    const storeDescription = document.getElementById("storeDescription").value.trim();
+
+    if (storeName === "") {
+        alert("Please enter your store name.");
+        return;
+    }
+
+    if (storeDescription === "") {
+        alert("Please enter a store description.");
+        return;
+    }
+
+    localStorage.setItem("storeName", storeName);
+    localStorage.setItem("storeDescription", storeDescription);
+
+    alert("✅ Store information saved successfully!");
+
+    document.querySelector(".store-info button").textContent = "✅ Store Saved";
+}
