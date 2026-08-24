@@ -822,3 +822,102 @@ a {
     height: 1px;
     background: #303846;
        }
+
+/* =========================
+   STORE SECTION
+========================= */
+
+#store {
+    padding: 25px;
+}
+
+#store h2 {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+#store > p {
+    margin-bottom: 25px;
+    opacity: 0.75;
+}
+
+/* Store information card */
+.store-info {
+    max-width: 650px;
+    padding: 25px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* Labels */
+.store-info label {
+    display: block;
+    margin-top: 18px;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+/* Text input and description */
+.store-info input[type="text"],
+.store-info textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.25);
+    color: inherit;
+    font-size: 15px;
+    outline: none;
+    transition: 0.2s;
+}
+
+/* Description box */
+.store-info textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* When the user clicks an input */
+.store-info input[type="text"]:focus,
+.store-info textarea:focus {
+    border-color: #6c63ff;
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
+}
+
+/* Image upload */
+.store-info input[type="file"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px dashed rgba(255, 255, 255, 0.25);
+    background: rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+}
+
+/* Edit Store button */
+.store-info button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    background: #6c63ff;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.store-info button:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+.store-info button:active {
+    transform: translateY(0);
+}
