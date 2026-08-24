@@ -499,3 +499,14 @@ function previewBanner(input) {
     reader.readAsDataURL(file);
                 }
 
+
+
+window.addEventListener("DOMContentLoaded", function () {
+    const savedBanner = localStorage.getItem("storeBanner");
+    const preview = document.getElementById("bannerPreview");
+
+    if (savedBanner && preview) {
+        preview.innerHTML =
+            '<img src="' + savedBanner + '" alt="Saved Store Banner">';
+    }
+});
