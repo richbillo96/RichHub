@@ -678,6 +678,7 @@ function deleteProduct(id) {
 
 window.addEventListener("DOMContentLoaded", function () {
     displayProducts();
+    loadStoreId();        
 });
 
 // Auto-fetch store_id when page loads
@@ -694,13 +695,14 @@ async function loadStoreId() {
     if (stores[0]) {
       localStorage.setItem("store_id", stores[0].id);
       console.log("Store ID loaded:", stores[0].id);
+      alert(stores[0].id);          
     }
   } catch (e) {
     console.error("Could not load store:", e);
   }
 }
 
-loadStoreId();
+
 
 async function saveStoreToSupabase() {
   const user = JSON.parse(localStorage.getItem("supabase_user") || "{}");
