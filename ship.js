@@ -461,28 +461,34 @@ function editStore() {
 }
 
 
-/* ===============================
-   STORE BANNER PREVIEW
-   =============================== */
+// ===============================
+// STORE BANNER PREVIEW
+// ===============================
 
-.banner-preview {
-  width: 100%;
-  max-width: 600px;
-  height: 220px;
-  margin: 15px 0;
-  border-radius: 16px;
-  border: 2px dashed rgba(255, 255, 255, 0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.05);
-  color: #aaa;
-  text-align: center;
-}
+const storeBanner = document.getElementById("storeBanner");
+const bannerPreview = document.getElementById("bannerPreview");
 
-.banner-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-              }
+if (storeBanner && bannerPreview) {
+
+  storeBanner.addEventListener("change", function () {
+
+    const file = this.files[0];
+
+    if (!file) {
+      bannerPreview.innerHTML = "<span>No image selected</span>";
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      bannerPreview.innerHTML = "<span>Please choose an image.</span>";
+      return;
+    }
+
+    const imageURL = URL.createObjectURL(file);
+
+    bannerPreview.innerHTML = `
+      <img src="${imageURL}" alt="Store banner preview">
+    `;
+  });
+
+        }
