@@ -1,24 +1,36 @@
 const SUPABASE_URL =
-            "https://tdrelswytmscpnkxmcgw.supabase.co";
+    "https://tdrelswytmscpnkxmcgw.supabase.co";
 
-        const SUPABASE_KEY =
-            "sb_publishable_t09l4fnt9ZGfnsc5bzxSdA_s64P1y_q";
+const SUPABASE_KEY =
+    "sb_publishable_t09l4fnt9ZGfnsc5bzxSdA_s64P1y_q";
 
+// =========================================
+// SUPABASE HELPERS
+// =========================================
 
 function getSupabaseHeaders() {
-  const token = localStorage.getItem("supabase_access_token");
-  return {
-    "apikey": SUPABASE_KEY,
-    "Authorization": token ? `Bearer ${token}` : `Bearer ${SUPABASE_KEY}`,
-    "Content-Type": "application/json",
-    "Prefer": "return=representation"
-  };
+    const token = localStorage.getItem("supabase_access_token");
+
+    return {
+        "apikey": SUPABASE_KEY,
+        "Authorization": token
+            ? `Bearer ${token}`
+            : `Bearer ${SUPABASE_KEY}`,
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+    };
+}
+
+function getCurrentUser() {
+    return JSON.parse(
+        localStorage.getItem("supabase_user") || "{}"
+    );
 }
 
 
-// ===============================
+// =========================================
 // AUTHENTICATION
-// ===============================
+// =========================================
 
 async function signUp() {
     const email = document.getElementById("auth-email").value.trim();
@@ -39,8 +51,8 @@ async function signUp() {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    email: email,
-                    password: password
+                    email,
+                    password
                 })
             }
         );
@@ -48,20 +60,38 @@ async function signUp() {
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(data.msg || data.message || data.error_description || "Sign up failed");
+            throw new Error(
+                data.msg ||
+                data.message ||
+                data.error_description ||
+                "Sign up failed"
+            );
         }
 
         if (data.access_token) {
-            localStorage.setItem("supabase_access_token", data.access_token);
-            
-            localStorage.setItem("supabase_user", JSON.stringify(data.user))
-            
-            document.getElementById("auth-section").style.display = "none";
-document.getElementById("hub-section").style.display = "block";
+            localStorage.setItem(
+                "supabase_access_token",
+                data.access_token
+            );
 
-            showAuthMessage("Account created successfully! You are logged in.");
+            localStorage.setItem(
+                "supabase_user",
+                JSON.stringify(data.user)
+            );
+
+            document.getElementById("auth-section").style.display = "none";
+            document.getElementById("hub-section").style.display = "block";
+
+            await loadStoreId();
+            await displayProducts();
+
+            showAuthMessage(
+                "Account created successfully! You are logged in."
+            );
         } else {
-            showAuthMessage("Account created. Please check your email to confirm your account.");
+            showAuthMessage(
+                "Account created. Please check your email."
+            );
         }
 
     } catch (error) {
@@ -82,7 +112,8 @@ async function logIn() {
 
     try {
         const response = await fetch(
-            SUPABASE_URL + "/auth/v1/token?grant_type=password",
+            SUPABASE_URL +
+            "/auth/v1/token?grant_type=password",
             {
                 method: "POST",
                 headers: {
@@ -90,8 +121,8 @@ async function logIn() {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    email: email,
-                    password: password
+                    email,
+                    password
                 })
             }
         );
@@ -99,14 +130,28 @@ async function logIn() {
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(data.error_description || data.msg || "Login failed");
+            throw new Error(
+                data.error_description ||
+                data.msg ||
+                "Login failed"
+            );
         }
 
-        localStorage.setItem("supabase_access_token", data.access_token);
-        localStorage.setItem("supabase_user", JSON.stringify(data.user));
+        localStorage.setItem(
+            "supabase_access_token",
+            data.access_token
+        );
 
-document.getElementById("auth-section").style.display = "none";
-document.getElementById("hub-section").style.display = "block";
+        localStorage.setItem(
+            "supabase_user",
+            JSON.stringify(data.user)
+        );
+
+        document.getElementById("auth-section").style.display = "none";
+        document.getElementById("hub-section").style.display = "block";
+
+        await loadStoreId();
+        await displayProducts();
 
         showAuthMessage("Login successful! ✅");
 
@@ -118,7 +163,8 @@ document.getElementById("hub-section").style.display = "block";
 
 
 function showAuthMessage(message) {
-    const messageBox = document.getElementById("auth-message");
+    const messageBox =
+        document.getElementById("auth-message");
 
     if (messageBox) {
         messageBox.textContent = message;
@@ -127,13 +173,24 @@ function showAuthMessage(message) {
 
 
 function isLoggedIn() {
-    return !!localStorage.getItem("supabase_access_token");
+    return !!localStorage.getItem(
+        "supabase_access_token"
+    );
 }
 
 
 function logout() {
-    localStorage.removeItem("supabase_access_token");
-    localStorage.removeItem("supabase_user");
+    localStorage.removeItem(
+        "supabase_access_token"
+    );
+
+    localStorage.removeItem(
+        "supabase_user"
+    );
+
+    localStorage.removeItem(
+        "store_id"
+    );
 
     document.getElementById("auth-section").style.display = "flex";
     document.getElementById("hub-section").style.display = "none";
@@ -142,292 +199,48 @@ function logout() {
 }
 
 
-// Check login status when page opens
 function checkLoginStatus() {
     if (isLoggedIn()) {
         showAuthMessage("You are logged in ✅");
     } else {
-        showAuthMessage("Please log in before placing an order.");
-    }
-}
-
-checkLoginStatus();
-
-        async function loadProducts() {
-
-            const productsList =
-                document.getElementById("products-list");
-
-            try {
-
-                const response = await fetch(
-                    SUPABASE_URL +
-                    "/rest/v1/Products?select=*",
-                    {
-                        method: "GET",
-
-                        headers: {
-                            "apikey": SUPABASE_KEY,
-                            "Authorization":
-                                "Bearer " + SUPABASE_KEY
-                        }
-                    }
-                );
-
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        "Supabase returned " +
-                        response.status
-                    );
-
-                }
-
-
-                const products =
-                    await response.json();
-
-
-                if (!products || products.length === 0) {
-
-                    productsList.innerHTML =
-                        "<p>No products available yet.</p>";
-
-                    return;
-                }
-
-
-                productsList.innerHTML =
-                    products.map(product => {
-
-
-                        let image =
-                            product.image_url;
-
-
-                        /*
-                         * If image_url is empty,
-                         * use an automatic image.
-                         */
-
-                        if (
-                            !image &&
-                            product.name &&
-                            product.name
-                                .toLowerCase()
-                                .includes("earbud")
-                        ) {
-
-                            image =
-                                "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=800&q=80";
-
-                        }
-
-
-                        if (
-                            !image &&
-                            product.name &&
-                            product.name
-                                .toLowerCase()
-                                .includes("nike")
-                        ) {
-
-                            image =
-                                "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80";
-
-                        }
-
-
-                        return `
-
-                            <div class="product-card">
-
-                                ${
-                                    image
-                                    ? `
-                                        <img
-                                            class="product-image"
-                                            src="${image}"
-                                            alt="${product.name || "Product"}"
-                                        >
-                                      `
-                                    : ""
-                                }
-
-
-                                <h3>
-                                    ${product.name || "Unnamed Product"}
-                                </h3>
-
-
-                                <p>
-                                    ${product.description || ""}
-                                </p>
-
-
-                                <div class="product-price">
-                                    $${product.price || 0}
-                                </div>
-
-
-                                <div class="stock">
-                                    Stock: ${product.stock || 0}
-                                </div>
-
-
-                                <button
-                                    class="buy-btn"
-                                    onclick="buyProduct(
-                                        '${product.name || "Product"}',
-                                        ${product.price || 0}
-                                    )"
-                                >
-                                    Buy Now
-                                </button>
-
-                            </div>
-
-                        `;
-
-                    }).join("");
-
-
-            } catch (error) {
-
-                console.error(
-                    "Product loading error:",
-                    error
-                );
-
-                productsList.innerHTML =
-                    "<p>Could not load products.</p>";
-
-            }
-
-        }
-
-
-        /*
-         * Load products when page opens
-         */
-
-        loadProducts();
-
-
-        async function buyProduct(name, price) {
-    const accessToken = localStorage.getItem("supabase_access_token");
-
-  if (!accessToken) {
-    alert("Please log in or sign up before placing an order.");
-
-    const authSection = document.getElementById("auth-section");
-
-    authSection.style.display = "block";
-    authSection.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-    });
-
-    return;
-}
-
-    try {
-        
-        // Get customer information
-        const customerName = prompt("Enter your full name:");
-        if (!customerName) return;
-
-        const customerPhone = prompt("Enter your phone number:");
-        if (!customerPhone) return;
-
-        const shippingAddress = prompt("Enter your delivery address:");
-        if (!shippingAddress) return;
-
-        const quantityInput = prompt("How many do you want?", "1");
-        const quantity = Number(quantityInput);
-
-        if (!Number.isInteger(quantity) || quantity < 1) {
-            alert("Please enter a valid quantity.");
-            return;
-        }
-
-        const totalAmount = Number(price) * quantity;
-
-        // Send order to Supabase
-        const response = await fetch(
-            SUPABASE_URL + "/rest/v1/Orders",
-            {
-                method: "POST",
-                headers: {
-                    "apikey": SUPABASE_KEY,
-                    "Authorization": "Bearer " + accessToken,
-                    "Content-Type": "application/json",
-                    "Prefer": "return=minimal"
-                },
-                body: JSON.stringify({
-                    product_name: name,
-                    quantity: quantity,
-                    customer_name: customerName,
-                    customer_phone: customerPhone,
-                    shipping_address: shippingAddress,
-                    total_amount: totalAmount,
-                    status: "pending"
-                })
-            }
+        showAuthMessage(
+            "Please log in before placing an order."
         );
-
-        if (!response.ok) {
-            const error = await response.text();
-            throw new Error(error);
-        }
-
-        alert(
-            "Order placed successfully! 🎉\n\n" +
-            "Product: " + name + "\n" +
-            "Quantity: " + quantity + "\n" +
-            "Total: $" + totalAmount + "\n\n" +
-            "Thank you, " + customerName + "!"
-        );
-
-    } catch (error) {
-        console.error("Order error:", error);
-        alert("Order failed ❌\n\n" + error.message);
     }
 }
-window.addEventListener("DOMContentLoaded", () => {
-    const accessToken = localStorage.getItem("supabase_access_token");
-
-    if (accessToken) {
-        document.getElementById("auth-section").style.display = "none";
-        document.getElementById("hub-section").style.display = "block";
-    } else {
-        document.getElementById("auth-section").style.display = "flex";
-        document.getElementById("hub-section").style.display = "none";
-    }
-});
 
 
+// =========================================
+// PASSWORD / GOOGLE LOGIN
+// =========================================
 
 function togglePassword() {
-  const password = document.getElementById("auth-password");
+    const password =
+        document.getElementById("auth-password");
 
-  if (password.type === "password") {
-    password.type = "text";
-  } else {
-    password.type = "password";
-  }
+    if (password.type === "password") {
+        password.type = "text";
+    } else {
+        password.type = "password";
+    }
 }
 
 
 async function loginWithGoogle() {
-    const redirectTo = window.location.origin + window.location.pathname;
+    const redirectTo =
+        window.location.origin +
+        window.location.pathname;
 
     window.location.href =
         SUPABASE_URL +
         "/auth/v1/authorize?provider=google&redirect_to=" +
         encodeURIComponent(redirectTo);
 }
+
+
+// =========================================
+// DASHBOARD
+// =========================================
 
 function showDashboard(section) {
     const sections = [
@@ -442,401 +255,1054 @@ function showDashboard(section) {
     ];
 
     sections.forEach(name => {
-        const element = document.getElementById(name);
+        const element =
+            document.getElementById(name);
 
         if (element) {
-            element.style.display = name === section ? "block" : "none";
+            element.style.display =
+                name === section
+                    ? "block"
+                    : "none";
         }
-        });
+    });
+
+    if (section === "products") {
+        displayProducts();
+    }
 }
 
-function editStore() {
-    const storeName = document.getElementById("storeName").value.trim();
-    const storeDescription = document.getElementById("storeDescription").value.trim();
-    const storeBanner = document.getElementById("storeBanner");
 
-    if (storeName === "") {
+// =========================================
+// STORE
+// =========================================
+
+async function editStore() {
+    const storeName =
+        document.getElementById("storeName").value.trim();
+
+    const storeDescription =
+        document.getElementById("storeDescription")
+            .value.trim();
+
+    const storeBanner =
+        document.getElementById("storeBanner");
+
+    if (!storeName) {
         alert("Please enter your store name.");
         return;
     }
 
-    if (storeDescription === "") {
+    if (!storeDescription) {
         alert("Please enter a store description.");
         return;
     }
 
-    localStorage.setItem("storeName", storeName);
-    localStorage.setItem("storeDescription", storeDescription);
+    // Save locally too
+    localStorage.setItem(
+        "storeName",
+        storeName
+    );
 
-    // Save the selected banner
-    if (storeBanner.files && storeBanner.files[0]) {
+    localStorage.setItem(
+        "storeDescription",
+        storeDescription
+    );
+
+    // Save banner locally
+    if (
+        storeBanner &&
+        storeBanner.files &&
+        storeBanner.files[0]
+    ) {
         const reader = new FileReader();
 
-        reader.onload = function(event) {
-            localStorage.setItem("storeBanner", event.target.result);
+        reader.onload = async function(event) {
 
-            alert("✅ Store information saved successfully!");
-            document.querySelector(".store-info button").textContent = "✅ Store Saved";
+            localStorage.setItem(
+                "storeBanner",
+                event.target.result
+            );
+
+            await saveStoreToSupabase(
+                storeName,
+                storeDescription,
+                event.target.result
+            );
         };
 
-        reader.readAsDataURL(storeBanner.files[0]);
+        reader.readAsDataURL(
+            storeBanner.files[0]
+        );
+
     } else {
-        alert("✅ Store information saved successfully!");
-        document.querySelector(".store-info button").textContent = "✅ Store Saved";
+
+        const banner =
+            localStorage.getItem("storeBanner") || null;
+
+        await saveStoreToSupabase(
+            storeName,
+            storeDescription,
+            banner
+        );
     }
 }
 
-function previewBanner(input) {
-    const preview = document.getElementById("bannerPreview");
 
-    if (!input.files || !input.files[0]) {
-        preview.innerHTML = "<span>No image selected</span>";
-        return;
+async function saveStoreToSupabase(
+    name,
+    description,
+    banner
+) {
+    const user = getCurrentUser();
+
+    if (!user.id) {
+        alert("Please log in first.");
+        return null;
     }
 
-    const file = input.files[0];
+    try {
 
-    if (!file.type.startsWith("image/")) {
-        preview.innerHTML = "<span>Please select an image.</span>";
-        return;
+        // Look for an existing store
+        const findResponse = await fetch(
+            SUPABASE_URL +
+            "/rest/v1/stores?user_id=eq." +
+            encodeURIComponent(user.id) +
+            "&select=*",
+            {
+                method: "GET",
+                headers: getSupabaseHeaders()
+            }
+        );
+
+        if (!findResponse.ok) {
+            throw new Error(
+                await findResponse.text()
+            );
+        }
+
+        const stores =
+            await findResponse.json();
+
+        let store;
+
+        // UPDATE existing store
+        if (stores.length > 0) {
+
+            store = stores[0];
+
+            const updateResponse =
+                await fetch(
+                    SUPABASE_URL +
+                    "/rest/v1/stores?id=eq." +
+                    encodeURIComponent(store.id),
+                    {
+                        method: "PATCH",
+                        headers: getSupabaseHeaders(),
+                        body: JSON.stringify({
+                            name,
+                            description,
+                            banner_url: banner
+                        })
+                    }
+                );
+
+            if (!updateResponse.ok) {
+                throw new Error(
+                    await updateResponse.text()
+                );
+            }
+
+        }
+
+        // CREATE new store
+        else {
+
+            const createResponse =
+                await fetch(
+                    SUPABASE_URL +
+                    "/rest/v1/stores",
+                    {
+                        method: "POST",
+                        headers: getSupabaseHeaders(),
+                        body: JSON.stringify({
+                            user_id: user.id,
+                            name,
+                            description,
+                            banner_url: banner
+                        })
+                    }
+                );
+
+            if (!createResponse.ok) {
+                throw new Error(
+                    await createResponse.text()
+                );
+            }
+
+            const created =
+                await createResponse.json();
+
+            store = created[0];
+        }
+
+        if (!store || !store.id) {
+            throw new Error(
+                "Store was saved but no store ID was returned."
+            );
+        }
+
+        // THIS IS THE IMPORTANT PART
+        localStorage.setItem(
+            "store_id",
+            store.id
+        );
+
+        alert(
+            "✅ Store saved to Supabase!\n\n" +
+            "Your store ID is ready.\n" +
+            "You can now add products."
+        );
+
+        return store.id;
+
+    } catch (error) {
+
+        console.error(
+            "Store save error:",
+            error
+        );
+
+        alert(
+            "❌ Store could not be saved.\n\n" +
+            error.message
+        );
+
+        return null;
     }
+}
 
-    const reader = new FileReader();
-
-    reader.onload = function(event) {
-        preview.innerHTML =
-            '<img src="' + event.target.result + '" alt="Store Banner">';
-    };
-
-    reader.readAsDataURL(file);
-                }
-
-
-
-window.addEventListener("DOMContentLoaded", function () {
-    const savedBanner = localStorage.getItem("storeBanner");
-    const preview = document.getElementById("bannerPreview");
-
-    if (savedBanner && preview) {
-        preview.innerHTML =
-            '<img src="' + savedBanner + '" alt="Saved Store Banner">';
-    }
-});
 
 // =========================================
-// ADD PRODUCT
+// LOAD STORE ID
+// =========================================
+
+async function loadStoreId() {
+
+    const user = getCurrentUser();
+
+    if (!user.id) {
+        return null;
+    }
+
+    try {
+
+        const response = await fetch(
+            SUPABASE_URL +
+            "/rest/v1/stores?user_id=eq." +
+            encodeURIComponent(user.id) +
+            "&select=id",
+            {
+                method: "GET",
+                headers: getSupabaseHeaders()
+            }
+        );
+
+        if (!response.ok) {
+            console.error(
+                "Store lookup failed:",
+                await response.text()
+            );
+            return null;
+        }
+
+        const stores =
+            await response.json();
+
+        if (stores.length > 0) {
+
+            localStorage.setItem(
+                "store_id",
+                stores[0].id
+            );
+
+            console.log(
+                "Store ID loaded:",
+                stores[0].id
+            );
+
+            return stores[0].id;
+        }
+
+        return null;
+
+    } catch (error) {
+
+        console.error(
+            "Could not load store:",
+            error
+        );
+
+        return null;
+    }
+}
+
+
+// =========================================
+// BANNER PREVIEW
+// =========================================
+
+function previewBanner(input) {
+
+    const preview =
+        document.getElementById("bannerPreview");
+
+    if (!preview) return;
+
+    if (
+        !input.files ||
+        !input.files[0]
+    ) {
+        preview.innerHTML =
+            "<span>No image selected</span>";
+        return;
+    }
+
+    const file =
+        input.files[0];
+
+    if (!file.type.startsWith("image/")) {
+
+        preview.innerHTML =
+            "<span>Please select an image.</span>";
+
+        return;
+    }
+
+    const reader =
+        new FileReader();
+
+    reader.onload =
+        function(event) {
+
+            preview.innerHTML =
+                '<img src="' +
+                event.target.result +
+                '" alt="Store Banner">';
+        };
+
+    reader.readAsDataURL(file);
+}
+
+
+// =========================================
+// ADD PRODUCT → SUPABASE
 // =========================================
 
 async function addProduct() {
-  const name = prompt("Enter product name:");
-  if (!name || !name.trim()) return;
 
-  const price = prompt("Enter product price:");
-  if (!price || isNaN(price)) {
-    alert("Please enter a valid price.");
-    return;
-  }
+    const name =
+        prompt("Enter product name:");
 
-  const description = prompt("Enter product description:");
-  if (!description || !description.trim()) return;
-
-  const stockInput = prompt("Enter product stock:", "10");
-  if (stockInput === null || isNaN(stockInput)) {
-    alert("Please enter a valid stock amount.");
-    return;
-  }
-
-  const storeId = localStorage.getItem("store_id");
-
-  if (!storeId) {
-    alert("No store found. Please save your store first.");
-    return;
-  }
-
-  const productPayload = {
-    store_id: storeId,
-    name: name.trim(),
-    description: description.trim(),
-    price: Number(price),
-    image_url: null,
-    stock: Number(stockInput)
-  };
-
-  try {
-    const response = await fetch(
-      SUPABASE_URL + "/rest/v1/product",
-      {
-        method: "POST",
-        headers: {
-          ...getSupabaseHeaders(),
-          "Prefer": "return=representation"
-        },
-        body: JSON.stringify(productPayload)
-      }
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Supabase error:", errorText);
-      alert("❌ Failed to save product to Supabase.");
-      return;
+    if (!name || !name.trim()) {
+        return;
     }
 
-    const saved = await response.json();
+    const price =
+        prompt("Enter product price:");
 
-    console.log("Product saved:", saved);
+    if (
+        !price ||
+        isNaN(price) ||
+        Number(price) < 0
+    ) {
+        alert("Please enter a valid price.");
+        return;
+    }
 
-    // Keep a local copy as backup
-    const products = JSON.parse(
-      localStorage.getItem("richhub_products") || "[]"
-    );
+    const description =
+        prompt("Enter product description:");
 
-    products.push(saved[0]);
-    localStorage.setItem(
-      "richhub_products",
-      JSON.stringify(products)
-    );
+    if (
+        !description ||
+        !description.trim()
+    ) {
+        return;
+    }
 
-    displayProducts();
+    const stockInput =
+        prompt(
+            "Enter product stock:",
+            "10"
+        );
 
-    alert("✅ Product added successfully!");
-  } catch (error) {
-    console.error("Product error:", error);
-    alert("❌ Something went wrong while saving the product.");
-  }
+    if (
+        stockInput === null ||
+        isNaN(stockInput) ||
+        Number(stockInput) < 0
+    ) {
+        alert("Please enter a valid stock amount.");
+        return;
+    }
+
+    // Try existing store ID first
+    let storeId =
+        localStorage.getItem("store_id");
+
+    // If missing, find it from Supabase
+    if (!storeId) {
+        storeId =
+            await loadStoreId();
+    }
+
+    // If still missing, tell the user to save store
+    if (!storeId) {
+
+        alert(
+            "⚠️ Your store has not been saved to Supabase yet.\n\n" +
+            "Go to your Store tab and click Edit Store first."
+        );
+
+        return;
+    }
+
+    const productPayload = {
+
+        store_id: storeId,
+
+        name: name.trim(),
+
+        description:
+            description.trim(),
+
+        price:
+            Number(price),
+
+        image_url: null,
+
+        stock:
+            Number(stockInput)
+    };
+
+    try {
+
+        const response =
+            await fetch(
+                SUPABASE_URL +
+                "/rest/v1/product",
+                {
+                    method: "POST",
+                    headers: getSupabaseHeaders(),
+                    body:
+                        JSON.stringify(
+                            productPayload
+                        )
+                }
+            );
+
+        if (!response.ok) {
+
+            const errorText =
+                await response.text();
+
+            console.error(
+                "Supabase product error:",
+                errorText
+            );
+
+            alert(
+                "❌ Product could not be saved.\n\n" +
+                errorText
+            );
+
+            return;
+        }
+
+        const saved =
+            await response.json();
+
+        console.log(
+            "Product saved:",
+            saved
+        );
+
+        alert(
+            "✅ Product added to Supabase!"
+        );
+
+        await displayProducts();
+
+    } catch (error) {
+
+        console.error(
+            "Product error:",
+            error
+        );
+
+        alert(
+            "❌ Something went wrong.\n\n" +
+            error.message
+        );
+    }
 }
 
+
 // =========================================
-// DISPLAY PRODUCTS
+// DISPLAY PRODUCTS FROM SUPABASE
 // =========================================
 
-function displayProducts() {
-    const productsGrid = document.getElementById("products-grid");
+async function displayProducts() {
+
+    const productsGrid =
+        document.getElementById(
+            "products-grid"
+        );
 
     if (!productsGrid) {
         return;
     }
 
-    const products = JSON.parse(
-        localStorage.getItem("richhub_products") || "[]"
-    );
+    let storeId =
+        localStorage.getItem("store_id");
 
-    if (products.length === 0) {
+    if (!storeId) {
+        storeId =
+            await loadStoreId();
+    }
+
+    if (!storeId) {
+
         productsGrid.innerHTML = `
             <div class="products-empty">
                 <div>📦</div>
-                <h3>No products yet</h3>
-                <p>Add your first product to start selling.</p>
-
-                <button onclick="addProduct()">
-                    ＋ Add Your First Product
-                </button>
+                <h3>No store connected</h3>
+                <p>Save your store first.</p>
             </div>
         `;
 
         return;
     }
 
-    productsGrid.innerHTML = "";
+    try {
 
-    products.forEach(product => {
+        const response =
+            await fetch(
+                SUPABASE_URL +
+                "/rest/v1/product?store_id=eq." +
+                encodeURIComponent(storeId) +
+                "&select=*",
+                {
+                    method: "GET",
+                    headers: getSupabaseHeaders()
+                }
+            );
 
-        const card = document.createElement("div");
+        if (!response.ok) {
 
-        card.className = "product-card";
+            throw new Error(
+                await response.text()
+            );
+        }
 
-        card.innerHTML = `
-            <div class="product-image">
-                📦
-            </div>
+        const products =
+            await response.json();
 
-            <h3>${product.name}</h3>
+        if (
+            !products ||
+            products.length === 0
+        ) {
 
-            <p>${product.description}</p>
+            productsGrid.innerHTML = `
+                <div class="products-empty">
+                    <div>📦</div>
+                    <h3>No products yet</h3>
+                    <p>Add your first product to start selling.</p>
 
-            <strong>$${product.price.toFixed(2)}</strong>
+                    <button onclick="addProduct()">
+                        ＋ Add Your First Product
+                    </button>
+                </div>
+            `;
 
-            <button onclick="deleteProduct(${product.id})">
-                🗑️ Delete
-            </button>
-        `;
+            return;
+        }
 
-        productsGrid.appendChild(card);
-    });
-}
+        productsGrid.innerHTML = "";
 
+        products.forEach(product => {
 
-// =========================================
-// DELETE PRODUCT
-// =========================================
+            const card =
+                document.createElement("div");
 
-function deleteProduct(id) {
+            card.className =
+                "product-card";
 
-    let products = JSON.parse(
-        localStorage.getItem("richhub_products") || "[]"
-    );
+            card.innerHTML = `
 
-    products = products.filter(product => product.id !== id);
+                ${
+                    product.image_url
+                    ? `
+                        <img
+                            class="product-image"
+                            src="${product.image_url}"
+                            alt="${product.name}"
+                        >
+                    `
+                    : `
+                        <div class="product-image">
+                            📦
+                        </div>
+                    `
+                }
 
-    localStorage.setItem(
-        "richhub_products",
-        JSON.stringify(products)
-    );
+                <h3>
+                    ${product.name}
+                </h3>
 
-    displayProducts();
-}
+                <p>
+                    ${product.description || ""}
+                </p>
 
+                <strong>
+                    $${Number(product.price).toFixed(2)}
+                </strong>
 
-// =========================================
-// LOAD PRODUCTS WHEN PAGE OPENS
-// =========================================
+                <p>
+                    Stock: ${product.stock}
+                </p>
 
-window.addEventListener("DOMContentLoaded", function () {
-    displayProducts();
-    loadStoreId();        
-});
+                <button
+                    onclick="deleteProduct('${product.id}')"
+                >
+                    🗑️ Delete
+                </button>
+            `;
 
-// Auto-fetch store_id when page loads
-async function loadStoreId() {
-  const user = JSON.parse(localStorage.getItem("supabase_user") || "{}");
-  if (!user.id) return;
+            productsGrid.appendChild(card);
+        });
 
-  try {
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/stores?user_id=eq.${user.id}&select=id`,
-      { headers: getSupabaseHeaders() }
-    );
-    const stores = await res.json();
-    if (stores[0]) {
-      localStorage.setItem("store_id", stores[0].id);
-      console.log("Store ID loaded:", stores[0].id);
-      alert(stores[0].id);          
+    } catch (error) {
+
+        console.error(
+            "Display products error:",
+            error
+        );
+
+        productsGrid.innerHTML =
+            "<p>Could not load products.</p>";
     }
-  } catch (e) {
-    console.error("Could not load store:", e);
-    alert(`error${e}`);        
-  }
 }
 
 
+// =========================================
+// DELETE PRODUCT FROM SUPABASE
+// =========================================
 
-async function saveStoreToSupabase() {
-  const user = JSON.parse(localStorage.getItem("supabase_user") || "{}");
-  if (!user.id) {
-    alert("You must be logged in.");
-    return;
-  }
+async function deleteProduct(id) {
 
-  // Get store info from your existing localStorage
-  const name = localStorage.getItem("storeName") || "My Store";
-  const description = localStorage.getItem("storeDescription") || "";
-  const banner = localStorage.getItem("storeBanner") || null;
+    if (!id) return;
 
-  const payload = {
-    user_id: user.id,
-    name: name,
-    description: description,
-    banner_url: banner
-  };
+    const confirmed =
+        confirm(
+            "Are you sure you want to delete this product?"
+        );
 
-  try {
-    const response = await fetch(
-      SUPABASE_URL + "/rest/v1/stores",
-      {
-        method: "POST",
-        headers: getSupabaseHeaders(),
-        body: JSON.stringify(payload)
-      }
-    );
-
-    if (!response.ok) {
-      const err = await response.json();
-      console.error(err);
-      alert("Failed to save store.");
-      return;
-    }
-
-    const data = await response.json();
-    const storeId = data[0].id;
-    localStorage.setItem("store_id", storeId);
-
-    alert("✅ Store saved! Now you can add products.");
-  } catch (e) {
-    console.error(e);
-    alert("Error saving store.");
-  }
-}
-// ==========================================
-// AUTO-ADD "SAVE STORE" BUTTON TO STORE TAB
-// ==========================================
-
-function injectStoreSaveButton() {
-  // Only add if not already there
-  if (document.getElementById("supabase-save-store-btn")) return;
-
-  const storeSection = document.getElementById("store-section");
-  if (!storeSection) return;
-
-  const btn = document.createElement("button");
-  btn.id = "supabase-save-store-btn";
-  btn.innerText = "💾 Save Store to Database";
-  btn.style.cssText = "margin-top:15px;padding:12px 20px;background:#4CAF50;color:white;border:none;border-radius:8px;cursor:pointer;font-size:16px;";
-  btn.onclick = saveStoreToSupabase;
-  
-  storeSection.appendChild(btn);
-}
-
-// Check every second for the Store tab to appear
-setInterval(injectStoreSaveButton, 1000);
-
-async function saveStoreToSupabase() {
-  const user = JSON.parse(localStorage.getItem("supabase_user") || "{}");
-  if (!user.id) {
-    alert("You must be logged in.");
-    return;
-  }
-
-  const name = localStorage.getItem("storeName") || prompt("Enter store name:");
-  const description = localStorage.getItem("storeDescription") || prompt("Enter store description:");
-  const banner = localStorage.getItem("storeBanner") || null;
-
-  if (!name) {
-    alert("Store name is required.");
-    return;
-  }
-
-  const payload = {
-    user_id: user.id,
-    name: name,
-    description: description,
-    banner_url: banner
-  };
-
-  try {
-    const response = await fetch(
-      SUPABASE_URL + "/rest/v1/stores",
-      {
-        method: "POST",
-        headers: getSupabaseHeaders(),
-        body: JSON.stringify(payload)
-      }
-    );
-
-    if (!response.ok) {
-      const err = await response.json();
-      console.error(err);
-      alert("Failed to save store. Check console.");
-      return;
+    if (!confirmed) {
+        return;
     }
 
-    const data = await response.json();
-    const storeId = data[0].id;
-    localStorage.setItem("store_id", storeId);
+    try {
 
-    alert("✅ Store saved to Supabase! Now you can add products.");
-  } catch (e) {
-    console.error(e);
-    alert("Error saving store.");
-  }
+        const response =
+            await fetch(
+                SUPABASE_URL +
+                "/rest/v1/product?id=eq." +
+                encodeURIComponent(id),
+                {
+                    method: "DELETE",
+                    headers: getSupabaseHeaders()
+                }
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                await response.text()
+            );
+        }
+
+        alert(
+            "✅ Product deleted."
+        );
+
+        await displayProducts();
+
+    } catch (error) {
+
+        console.error(
+            "Delete product error:",
+            error
+        );
+
+        alert(
+            "❌ Product could not be deleted.\n\n" +
+            error.message
+        );
+    }
 }
 
+
+// =========================================
+// PUBLIC PRODUCTS / SHOP
+// =========================================
+
+async function loadProducts() {
+
+    const productsList =
+        document.getElementById(
+            "products-list"
+        );
+
+    if (!productsList) {
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                SUPABASE_URL +
+                "/rest/v1/product?select=*",
+                {
+                    method: "GET",
+                    headers: getSupabaseHeaders()
+                }
+            );
+
+        if (!response.ok) {
+            throw new Error(
+                await response.text()
+            );
+        }
+
+        const products =
+            await response.json();
+
+        if (
+            !products ||
+            products.length === 0
+        ) {
+
+            productsList.innerHTML =
+                "<p>No products available yet.</p>";
+
+            return;
+        }
+
+        productsList.innerHTML =
+            products.map(product => {
+
+                let image =
+                    product.image_url;
+
+                if (
+                    !image &&
+                    product.name &&
+                    product.name
+                        .toLowerCase()
+                        .includes("earbud")
+                ) {
+                    image =
+                        "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=800&q=80";
+                }
+
+                return `
+
+                    <div class="product-card">
+
+                        ${
+                            image
+                            ? `
+                                <img
+                                    class="product-image"
+                                    src="${image}"
+                                    alt="${product.name || "Product"}"
+                                >
+                            `
+                            : ""
+                        }
+
+                        <h3>
+                            ${product.name || "Unnamed Product"}
+                        </h3>
+
+                        <p>
+                            ${product.description || ""}
+                        </p>
+
+                        <div class="product-price">
+                            $${Number(product.price || 0).toFixed(2)}
+                        </div>
+
+                        <div class="stock">
+                            Stock: ${product.stock || 0}
+                        </div>
+
+                        <button
+                            class="buy-btn"
+                            onclick="buyProduct(
+                                '${String(product.name || "Product").replace(/'/g, "\\'")}',
+                                ${Number(product.price || 0)}
+                            )"
+                        >
+                            Buy Now
+                        </button>
+
+                    </div>
+                `;
+
+            }).join("");
+
+    } catch (error) {
+
+        console.error(
+            "Product loading error:",
+            error
+        );
+
+        productsList.innerHTML =
+            "<p>Could not load products.</p>";
+    }
+}
+
+
+// =========================================
+// BUY PRODUCT
+// =========================================
+
+async function buyProduct(
+    name,
+    price
+) {
+
+    const accessToken =
+        localStorage.getItem(
+            "supabase_access_token"
+        );
+
+    if (!accessToken) {
+
+        alert(
+            "Please log in or sign up before placing an order."
+        );
+
+        const authSection =
+            document.getElementById(
+                "auth-section"
+            );
+
+        if (authSection) {
+
+            authSection.style.display =
+                "block";
+
+            authSection.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+        }
+
+        return;
+    }
+
+    try {
+
+        const customerName =
+            prompt(
+                "Enter your full name:"
+            );
+
+        if (!customerName) return;
+
+        const customerPhone =
+            prompt(
+                "Enter your phone number:"
+            );
+
+        if (!customerPhone) return;
+
+        const shippingAddress =
+            prompt(
+                "Enter your delivery address:"
+            );
+
+        if (!shippingAddress) return;
+
+        const quantityInput =
+            prompt(
+                "How many do you want?",
+                "1"
+            );
+
+        const quantity =
+            Number(quantityInput);
+
+        if (
+            !Number.isInteger(quantity) ||
+            quantity < 1
+        ) {
+            alert(
+                "Please enter a valid quantity."
+            );
+            return;
+        }
+
+        const totalAmount =
+            Number(price) * quantity;
+
+        const response =
+            await fetch(
+                SUPABASE_URL +
+                "/rest/v1/Orders",
+                {
+                    method: "POST",
+                    headers: {
+                        ...getSupabaseHeaders(),
+                        "Authorization":
+                            "Bearer " +
+                            accessToken
+                    },
+                    body: JSON.stringify({
+                        product_name: name,
+                        quantity,
+                        customer_name:
+                            customerName,
+                        customer_phone:
+                            customerPhone,
+                        shipping_address:
+                            shippingAddress,
+                        total_amount:
+                            totalAmount,
+                        status:
+                            "pending"
+                    })
+                }
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                await response.text()
+            );
+        }
+
+        alert(
+            "Order placed successfully! 🎉\n\n" +
+            "Product: " + name + "\n" +
+            "Quantity: " + quantity + "\n" +
+            "Total: $" + totalAmount + "\n\n" +
+            "Thank you, " +
+            customerName +
+            "!"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Order error:",
+            error
+        );
+
+        alert(
+            "Order failed ❌\n\n" +
+            error.message
+        );
+    }
+}
+
+
+// =========================================
+// PAGE STARTUP
+// =========================================
+
+window.addEventListener(
+    "DOMContentLoaded",
+    async function() {
+
+        const accessToken =
+            localStorage.getItem(
+                "supabase_access_token"
+            );
+
+        if (accessToken) {
+
+            const authSection =
+                document.getElementById(
+                    "auth-section"
+                );
+
+            const hubSection =
+                document.getElementById(
+                    "hub-section"
+                );
+
+            if (authSection)
+                authSection.style.display =
+                    "none";
+
+            if (hubSection)
+                hubSection.style.display =
+                    "block";
+
+            await loadStoreId();
+            await displayProducts();
+
+        } else {
+
+            const authSection =
+                document.getElementById(
+                    "auth-section"
+                );
+
+            const hubSection =
+                document.getElementById(
+                    "hub-section"
+                );
+
+            if (authSection)
+                authSection.style.display =
+                    "flex";
+
+            if (hubSection)
+                hubSection.style.display =
+                    "none";
+        }
+
+        // Restore banner preview
+        const savedBanner =
+            localStorage.getItem(
+                "storeBanner"
+            );
+
+        const preview =
+            document.getElementById(
+                "bannerPreview"
+            );
+
+        if (
+            savedBanner &&
+            preview
+        ) {
+
+            preview.innerHTML =
+                '<img src="' +
+                savedBanner +
+                '" alt="Saved Store Banner">';
+        }
+
+        await loadProducts();
+    }
+);
+
+
+// Initial login check
+checkLoginStatus();
