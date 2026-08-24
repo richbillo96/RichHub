@@ -9,373 +9,706 @@
     <link rel="stylesheet" href="./DS.css">
 </head>
 
+<body>
 
-  <body>
-    <div id="auth-section" style="display:flex;">
-  <div class="login-card">
+<!-- =========================
+     LOGIN / AUTH
+========================= -->
 
-    <div class="login-logo">RichHub</div>
+<div id="auth-section" style="display:flex;">
 
-    <h2>Welcome Back 👋</h2>
-    <p class="login-subtitle">Sign in to continue to your RichHub account</p>
+    <div class="login-card">
 
-    <div class="input-group">
-      <label for="auth-email">Email</label>
-      <input
-        id="auth-email"
-        type="email"
-        placeholder="Enter your email"
-        autocomplete="email"
-      >
-    </div>
+        <div class="login-logo">RichHub</div>
 
-    <div class="input-group">
-      <label for="auth-password">Password</label>
+        <h2>Welcome Back 👋</h2>
 
-      <div class="password-box">
-        <input
-          id="auth-password"
-          type="password"
-          placeholder="Enter your password"
-          autocomplete="current-password"
-        >
+        <p class="login-subtitle">
+            Sign in to continue to your RichHub account
+        </p>
+
+        <div class="input-group">
+
+            <label for="auth-email">
+                Email
+            </label>
+
+            <input
+                id="auth-email"
+                type="email"
+                placeholder="Enter your email"
+                autocomplete="email"
+            >
+
+        </div>
+
+        <div class="input-group">
+
+            <label for="auth-password">
+                Password
+            </label>
+
+            <div class="password-box">
+
+                <input
+                    id="auth-password"
+                    type="password"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                >
+
+                <button
+                    type="button"
+                    class="show-password"
+                    onclick="togglePassword()"
+                >
+                    👁
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="login-options">
+
+            <label>
+                <input type="checkbox">
+                Remember me
+            </label>
+
+            <a href="#" onclick="return false;">
+                Forgot password?
+            </a>
+
+        </div>
 
         <button
-          type="button"
-          class="show-password"
-          onclick="togglePassword()"
+            class="login-btn"
+            onclick="logIn()"
         >
-          👁
+            Log In
         </button>
-      </div>
-    </div>
 
-    <div class="login-options">
-      <label>
-        <input type="checkbox">
-        Remember me
-      </label>
+        <div class="divider">
+            <span>OR</span>
+        </div>
 
-      <a href="#" onclick="return false;">Forgot password?</a>
-    </div>
+        <button
+            class="google-btn"
+            onclick="loginWithGoogle()"
+        >
+            <span>G</span>
+            Continue with Google
+        </button>
 
-    <button class="login-btn" onclick="logIn()">
-      Log In
-    </button>
+        <button
+            class="create-btn"
+            onclick="signUp()"
+        >
+            Create Account
+        </button>
 
-    <div class="divider">
-      <span>OR</span>
-    </div>
-
-      <button class="google-btn" onclick="loginWithGoogle()">
-    <span>G</span> Continue with Google
-      </button>
-      
-    <button class="create-btn" onclick="signUp()">
-      Create Account
-    </button>
-
-    <p id="auth-message"></p>
-
-  </div>
+        <p id="auth-message"></p>
 
     </div>
+
+</div>
+
+
+<!-- =========================
+     STORE HUB
+========================= -->
+
 <div id="hub-section" style="display:none;">
 
+    <header class="dashboard-header">
 
-  <!-- DASHBOARD HEADER -->
-  <header class="dashboard-header">
-    <div>
-      <h1>Welcome to RichHub 👋</h1>
-      <p>Manage your online business from one place.</p>
-    </div>
+        <div>
 
-    <button onclick="logout()" class="logout-btn">
-      Logout
-    </button>
-  </header>
+            <h1>
+                Welcome to RichHub 👋
+            </h1>
 
-  <!-- DASHBOARD NAVIGATION -->
-  <nav class="dashboard-nav">
+            <p>
+                Manage your online business from one place.
+            </p>
 
-    <button onclick="showDashboard('overview')">
-      🏠 Overview
-    </button>
-
-    <button onclick="showDashboard('store')">
-      🛍️ Store
-    </button>
-
-    <button onclick="showDashboard('products')">
-      📦 Products
-    </button>
-
-    <button onclick="showDashboard('orders')">
-      🛒 Orders
-    </button>
-
-    <button onclick="showDashboard('customers')">
-      👥 Customers
-    </button>
-
-    <button onclick="showDashboard('revenue')">
-      💰 Revenue
-    </button>
-
-    <button onclick="showDashboard('ads')">
-      📢 Ads
-    </button>
-
-    <button onclick="showDashboard('settings')">
-      ⚙️ Settings
-    </button>
-
-  </nav>
-
-  <!-- OVERVIEW -->
-  <main class="dashboard-content">
-
-    <section id="overview" class="dashboard-page">
-
-      <h2>Dashboard Overview</h2>
-
-      <div class="dashboard-cards">
-
-        <div class="dashboard-card">
-          <span>💰</span>
-          <h3>Total Revenue</h3>
-          <p>$0.00</p>
         </div>
 
-        <div class="dashboard-card">
-          <span>🛒</span>
-          <h3>Total Orders</h3>
-          <p>0</p>
-        </div>
-
-        <div class="dashboard-card">
-          <span>📦</span>
-          <h3>Products</h3>
-          <p>0</p>
-        </div>
-
-        <div class="dashboard-card">
-          <span>👥</span>
-          <h3>Customers</h3>
-          <p>0</p>
-        </div>
-
-      </div>
-
-      <div class="dashboard-panel">
-
-        <h3>Quick Actions</h3>
-
-        <button onclick="showDashboard('products')">
-          ➕ Add Product
+        <button
+            onclick="logout()"
+            class="logout-btn"
+        >
+            Logout
         </button>
 
-        <button onclick="showDashboard('orders')">
-          🛒 View Orders
+    </header>
+
+
+    <!-- NAVIGATION -->
+
+    <nav class="dashboard-nav">
+
+        <button onclick="showDashboard('overview')">
+            🏠 Overview
         </button>
 
         <button onclick="showDashboard('store')">
-          🛍️ Manage Store
+            🛍️ Store
         </button>
 
-      </div>
-
-    </section>
-
-
-    <!-- STORE -->
-
-      <section id="store" class="dashboard-page" style="display:none;">
-
-    <div class="store-header">
-        <div>
-            <h2>🛍️ My Store</h2>
-            <p>Manage your online store and products from one place.</p>
-        </div>
-
-        <button type="button" class="edit-store-btn" onclick="editStore()">
-            ✏️ Edit Store
-        </button>
-    </div>
-
-    <!-- STORE PROFILE -->
-    <div class="store-profile">
-
-        <div class="store-banner" id="bannerPreview">
-            <span>🖼️ Your Store Banner</span>
-        </div>
-
-        <div class="store-details">
-
-            <div class="store-logo">
-                🛍️
-            </div>
-
-            <div class="store-text">
-                <h2 id="storeNameDisplay">RichHub Store</h2>
-
-                <p id="storeDescriptionDisplay">
-                    Your trusted online store for quality products.
-                </p>
-
-                <span class="store-status">
-                    🟢 Active
-                </span>
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- STORE STATISTICS -->
-    <div class="store-stats">
-
-        <div class="store-stat-card">
-            <span>📦</span>
-            <div>
-                <small>Total Products</small>
-                <strong id="storeProductCount">0</strong>
-            </div>
-        </div>
-
-        <div class="store-stat-card">
-            <span>🛒</span>
-            <div>
-                <small>Total Orders</small>
-                <strong id="storeOrderCount">0</strong>
-            </div>
-        </div>
-
-        <div class="store-stat-card">
-            <span>👥</span>
-            <div>
-                <small>Total Customers</small>
-                <strong id="storeCustomerCount">0</strong>
-            </div>
-        </div>
-
-        <div class="store-stat-card">
-            <span>💰</span>
-            <div>
-                <small>Total Revenue</small>
-                <strong id="storeRevenue">$0.00</strong>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- STORE PRODUCTS -->
-    <div class="store-products-header">
-
-        <div>
-            <h2>📦 Your Products</h2>
-            <p>Products customers can buy from your store.</p>
-        </div>
-
-        <button type="button" class="add-product-btn"
-                onclick="showDashboard('products')">
-            ＋ Add Product
+        <button onclick="showDashboard('products')">
+            📦 Products
         </button>
 
-    </div>
+        <button onclick="showDashboard('orders')">
+            🛒 Orders
+        </button>
 
-    <div class="store-product-box">
+        <button onclick="showDashboard('customers')">
+            👥 Customers
+        </button>
 
-        <div class="empty-store">
-            <div>📦</div>
+        <button onclick="showDashboard('revenue')">
+            💰 Revenue
+        </button>
 
-            <h3>No products yet</h3>
+        <button onclick="showDashboard('ads')">
+            📢 Ads
+        </button>
+
+        <button onclick="showDashboard('settings')">
+            ⚙️ Settings
+        </button>
+
+    </nav>
+
+
+    <main class="dashboard-content">
+
+
+        <!-- =========================
+             OVERVIEW
+        ========================= -->
+
+        <section
+            id="overview"
+            class="dashboard-page"
+        >
+
+            <h2>
+                Dashboard Overview
+            </h2>
+
+            <div class="dashboard-cards">
+
+                <div class="dashboard-card">
+                    <span>💰</span>
+                    <h3>Total Revenue</h3>
+                    <p>$0.00</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <span>🛒</span>
+                    <h3>Total Orders</h3>
+                    <p>0</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <span>📦</span>
+                    <h3>Products</h3>
+                    <p>0</p>
+                </div>
+
+                <div class="dashboard-card">
+                    <span>👥</span>
+                    <h3>Customers</h3>
+                    <p>0</p>
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-panel">
+
+                <h3>
+                    Quick Actions
+                </h3>
+
+                <button
+                    onclick="showDashboard('products')"
+                >
+                    ➕ Add Product
+                </button>
+
+                <button
+                    onclick="showDashboard('orders')"
+                >
+                    🛒 View Orders
+                </button>
+
+                <button
+                    onclick="showDashboard('store')"
+                >
+                    🛍️ Manage Store
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             STORE
+        ========================= -->
+
+        <section
+            id="store"
+            class="dashboard-page"
+            style="display:none;"
+        >
+
+            <div class="store-header">
+
+                <div>
+
+                    <h2>
+                        🛍️ My Store
+                    </h2>
+
+                    <p>
+                        Manage your online store and products from one place.
+                    </p>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="edit-store-btn"
+                    onclick="editStore()"
+                >
+                    ✏️ Edit Store
+                </button>
+
+            </div>
+
+
+            <!-- STORE PROFILE -->
+
+            <div class="store-profile">
+
+                <div
+                    class="store-banner"
+                    id="bannerPreview"
+                >
+                    <span>
+                        🖼️ Your Store Banner
+                    </span>
+                </div>
+
+                <div class="store-details">
+
+                    <div class="store-logo">
+                        🛍️
+                    </div>
+
+                    <div class="store-text">
+
+                        <h2 id="storeNameDisplay">
+                            RichHub Store
+                        </h2>
+
+                        <p id="storeDescriptionDisplay">
+                            Your trusted online store for quality products.
+                        </p>
+
+                        <span class="store-status">
+                            🟢 Active
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- STORE STATISTICS -->
+
+            <div class="store-stats">
+
+                <div class="store-stat-card">
+
+                    <span>📦</span>
+
+                    <div>
+
+                        <small>
+                            Total Products
+                        </small>
+
+                        <strong id="storeProductCount">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="store-stat-card">
+
+                    <span>🛒</span>
+
+                    <div>
+
+                        <small>
+                            Total Orders
+                        </small>
+
+                        <strong id="storeOrderCount">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="store-stat-card">
+
+                    <span>👥</span>
+
+                    <div>
+
+                        <small>
+                            Total Customers
+                        </small>
+
+                        <strong id="storeCustomerCount">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="store-stat-card">
+
+                    <span>💰</span>
+
+                    <div>
+
+                        <small>
+                            Total Revenue
+                        </small>
+
+                        <strong id="storeRevenue">
+                            $0.00
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- STORE PRODUCTS -->
+
+            <div class="store-products-header">
+
+                <div>
+
+                    <h2>
+                        📦 Your Products
+                    </h2>
+
+                    <p>
+                        Products customers can buy from your store.
+                    </p>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="add-product-btn"
+                    onclick="showDashboard('products')"
+                >
+                    ＋ Add Product
+                </button>
+
+            </div>
+
+
+            <div class="store-product-box">
+
+                <div class="empty-store">
+
+                    <div>
+                        📦
+                    </div>
+
+                    <h3>
+                        No products yet
+                    </h3>
+
+                    <p>
+                        Add your first product and start selling on RichHub.
+                    </p>
+
+                    <button
+                        type="button"
+                        onclick="showDashboard('products')"
+                    >
+                        ＋ Add Your First Product
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             STORE EDITOR
+        ========================= -->
+
+        <section
+            id="store-editor"
+            class="dashboard-page"
+            style="display:none;"
+        >
+
+            <h2>
+                ✏️ Edit Your Store
+            </h2>
 
             <p>
-                Add your first product and start selling on RichHub.
+                Change your store information below.
             </p>
 
-            <button type="button"
-                    onclick="showDashboard('products')">
-                ＋ Add Your First Product
+
+            <div class="input-group">
+
+                <label for="storeName">
+                    Store Name
+                </label>
+
+                <input
+                    id="storeName"
+                    type="text"
+                    placeholder="Enter your store name"
+                >
+
+            </div>
+
+
+            <div class="input-group">
+
+                <label for="storeDescription">
+                    Store Description
+                </label>
+
+                <textarea
+                    id="storeDescription"
+                    placeholder="Enter your store description"
+                    rows="5"
+                ></textarea>
+
+            </div>
+
+
+            <div class="input-group">
+
+                <label for="storeBanner">
+                    Store Banner
+                </label>
+
+                <input
+                    id="storeBanner"
+                    type="file"
+                    accept="image/*"
+                    onchange="previewBanner(this)"
+                >
+
+            </div>
+
+
+            <button
+                type="button"
+                onclick="saveEditedStore()"
+            >
+                💾 Save Store
             </button>
-        </div>
 
-    </div>
 
-    </section>
-      
-<!-- PRODUCTS -->
-      
-    <section id="products" class="dashboard-page" style="display:none;">
-
-    <div class="products-header">
-        <div>
-            <h2>📦 Products</h2>
-            <p>Add and manage everything you sell on RichHub.</p>
-        </div>
-
-        <button class="add-product-main-btn" onclick="addProduct()">
-            ＋ Add Product
-        </button>
-    </div>
-
-    <div class="products-grid" id="products-grid">
-
-        <div class="products-empty">
-            <div>📦</div>
-            <h3>No products yet</h3>
-            <p>Add your first product to start selling.</p>
-
-            <button onclick="addProduct()">
-                ＋ Add Your First Product
+            <button
+                type="button"
+                onclick="showDashboard('store')"
+            >
+                ← Back to Store
             </button>
-        </div>
 
-    </div>
-
-    </section>
-
-    <!-- ORDERS -->
-    <section id="orders" class="dashboard-page" style="display:none;">
-      <h2>🛒 Orders</h2>
-      <p>Your customer orders will appear here.</p>
-    </section>
+        </section>
 
 
-    <!-- CUSTOMERS -->
-    <section id="customers" class="dashboard-page" style="display:none;">
-      <h2>👥 Customers</h2>
-      <p>Manage your customers here.</p>
-    </section>
+        <!-- =========================
+             PRODUCTS
+        ========================= -->
+
+        <section
+            id="products"
+            class="dashboard-page"
+            style="display:none;"
+        >
+
+            <div class="products-header">
+
+                <div>
+
+                    <h2>
+                        📦 Products
+                    </h2>
+
+                    <p>
+                        Add and manage everything you sell on RichHub.
+                    </p>
+
+                </div>
+
+                <button
+                    class="add-product-main-btn"
+                    onclick="addProduct()"
+                >
+                    ＋ Add Product
+                </button>
+
+            </div>
 
 
-    <!-- REVENUE -->
-    <section id="revenue" class="dashboard-page" style="display:none;">
-      <h2>💰 Revenue</h2>
-      <p>View your sales and earnings here.</p>
-    </section>
+            <div
+                class="products-grid"
+                id="products-grid"
+            >
+
+                <div class="products-empty">
+
+                    <div>
+                        📦
+                    </div>
+
+                    <h3>
+                        No products yet
+                    </h3>
+
+                    <p>
+                        Add your first product to start selling.
+                    </p>
+
+                    <button onclick="addProduct()">
+                        ＋ Add Your First Product
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
 
 
-    <!-- ADS -->
-    <section id="ads" class="dashboard-page" style="display:none;">
-      <h2>📢 Ads</h2>
-      <p>Create and manage advertisements for your store.</p>
-    </section>
+        <!-- ORDERS -->
+
+        <section
+            id="orders"
+            class="dashboard-page"
+            style="display:none;"
+        >
+
+            <h2>🛒 Orders</h2>
+
+            <p>
+                Your customer orders will appear here.
+            </p>
+
+        </section>
 
 
-    <!-- SETTINGS -->
-    <section id="settings" class="dashboard-page" style="display:none;">
-      <h2>⚙️ Settings</h2>
-      <p>Manage your RichHub account and store settings.</p>
-    </section>
+        <!-- CUSTOMERS -->
 
-  </main>
+        <section
+            id="customers"
+            class="dashboard-page"
+            style="display:none;"
+        >
 
-    </div>  
-    </div>
-    
-        <script src="ship.js"></script>
+            <h2>👥 Customers</h2>
+
+            <p>
+                Manage your customers here.
+            </p>
+
+        </section>
+
+
+        <!-- REVENUE -->
+
+        <section
+            id="revenue"
+            class="dashboard-page"
+            style="display:none;"
+        >
+
+            <h2>💰 Revenue</h2>
+
+            <p>
+                View your sales and earnings here.
+            </p>
+
+        </section>
+
+
+        <!-- ADS -->
+
+        <section
+            id="ads"
+            class="dashboard-page"
+            style="display:none;"
+        >
+
+            <h2>📢 Ads</h2>
+
+            <p>
+                Create and manage advertisements for your store.
+            </p>
+
+        </section>
+
+
+        <!-- SETTINGS -->
+
+        <section
+            id="settings"
+            class="dashboard-page"
+            style="display:none;"
+        >
+
+            <h2>⚙️ Settings</h2>
+
+            <p>
+                Manage your RichHub account and store settings.
+            </p>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script src="ship.js"></script>
+
 </body>
-</html>
-
+                    </html>
