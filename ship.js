@@ -533,10 +533,10 @@ function createStoreEditor() {
 // LOAD STORE
 // =========================================
 
+
 async function loadStore() {
 
-    const user =
-        getCurrentUser();
+    const user = getCurrentUser();
 
     if (!user.id) {
         return;
@@ -544,110 +544,83 @@ async function loadStore() {
 
     try {
 
-        const response =
-            await fetch(
+        const response = await fetch(
+            SUPABASE_URL +
+            "/rest/v1/stores?owner_id=eq." +
+            encodeURIComponent(user.id) +
+            "&select=*",
 
-                SUPABASE_URL +
-                "/rest/v1/stores?user_id=eq." +
-                encodeURIComponent(user.id) +
-                "&select=*",
-
-                {
-                    method: "GET",
-
-                    headers:
-                        getSupabaseHeaders()
-                }
-            );
+            {
+                method: "GET",
+                headers: getSupabaseHeaders()
+            }
+        );
 
         if (!response.ok) {
 
             console.error(
+                "Load store error:",
                 await response.text()
             );
 
             return;
         }
 
-        const stores =
-            await response.json();
+        const stores = await response.json();
 
         if (!stores.length) {
+            console.log("No store found for this user.");
             return;
         }
 
-        const store =
-            stores[0];
+        const store = stores[0];
 
+        // Save store ID
         localStorage.setItem(
             "store_id",
             store.id
         );
 
+        // Fill store name
         const nameInput =
             document.getElementById("storeName");
 
-        const descriptionInput =
-            document.getElementById(
-                "storeDescription"
-            );
-
         if (nameInput) {
-
             nameInput.value =
-                store.name || "";
+                store.store_name || "";
         }
 
-        if (descriptionInput) {
+        // Fill description
+        const descriptionInput =
+            document.getElementById("storeDescription");
 
+        if (descriptionInput) {
             descriptionInput.value =
                 store.description || "";
         }
 
+        // Display store name
         const nameDisplay =
             document.getElementById(
                 "storeNameDisplay"
             );
 
+        if (nameDisplay) {
+            nameDisplay.textContent =
+                store.store_name ||
+                "Rich Hub";
+        }
+
+        // Display store description
         const descriptionDisplay =
             document.getElementById(
                 "storeDescriptionDisplay"
             );
 
-        if (nameDisplay) {
-
-            nameDisplay.textContent =
-                store.name ||
-                "RichHub Store";
-        }
-
         if (descriptionDisplay) {
-
             descriptionDisplay.textContent =
                 store.description ||
-                "Your trusted online store for quality products.";
-        }
-
-        if (store.banner_url) {
-
-            localStorage.setItem(
-                "storeBanner",
-                store.banner_url
-            );
-
-            const preview =
-                document.getElementById(
-                    "bannerPreview"
-                );
-
-            if (preview) {
-
-                preview.innerHTML =
-                    `<img
-                        src="${store.banner_url}"
-                        alt="Store Banner"
-                    >`;
-            }
+                "Online store for quality goods";
         }
 
     } catch (error) {
@@ -657,8 +630,9 @@ async function loadStore() {
             error
         );
     }
-}
+    }
 
+        
 
 // =========================================
 // SAVE EDITED STORE
