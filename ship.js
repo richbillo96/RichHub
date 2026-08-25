@@ -634,6 +634,7 @@ async function loadStore() {
 
         
 
+
 // =========================================
 // SAVE EDITED STORE
 // =========================================
@@ -693,131 +694,84 @@ async function saveEditedStore() {
         return;
     }
 
-    const bannerInput =
-        document.getElementById(
-            "storeBanner"
-        );
-
-    let banner =
-        localStorage.getItem(
-            "storeBanner"
-        ) || null;
-
     try {
-
-        if (
-            bannerInput &&
-            bannerInput.files &&
-            bannerInput.files[0]
-        ) {
-
-            const file =
-                bannerInput.files[0];
-
-            if (
-                !file.type.startsWith("image/")
-            ) {
-
-                alert(
-                    "Please select an image."
-                );
-
-                return;
-            }
-
-            banner =
-                await readFileAsDataURL(file);
-
-            localStorage.setItem(
-                "storeBanner",
-                banner
-            );
-        }
-
 
         let storeId =
             localStorage.getItem("store_id");
 
-
+        // If we don't have the store ID,
+        // find the user's store first.
         if (!storeId) {
 
-            storeId =
-                await loadStoreId();
-        }
-
-
-        let response;
-
-
-        // UPDATE EXISTING STORE
-
-        if (storeId) {
-
-            response =
+            const findResponse =
                 await fetch(
-
                     SUPABASE_URL +
-                    "/rest/v1/stores?id=eq." +
-                    encodeURIComponent(storeId),
+                    "/rest/v1/stores?owner_id=eq." +
+                    encodeURIComponent(user.id) +
+                    "&select=id",
 
                     {
-                        method: "PATCH",
-
-                        headers:
-                            getSupabaseHeaders(),
-
-                        body:
-                            JSON.stringify({
-
-                                name:
-                                    storeName,
-
-                                description:
-                                    storeDescription,
-
-                                banner_url:
-                                    banner
-                            })
+                        method: "GET",
+                        headers: getSupabaseHeaders()
                     }
                 );
 
-        }
+            if (!findResponse.ok) {
 
-        // CREATE NEW STORE
-
-        else {
-
-            response =
-                await fetch(
-
-                    SUPABASE_URL +
-                    "/rest/v1/stores",
-
-                    {
-                        method: "POST",
-
-                        headers:
-                            getSupabaseHeaders(),
-
-                        body:
-                            JSON.stringify({
-
-                                user_id:
-                                    user.id,
-
-                                name:
-                                    storeName,
-
-                                description:
-                                    storeDescription,
-
-                                banner_url:
-                                    banner
-                            })
-                    }
+                throw new Error(
+                    await findResponse.text()
                 );
+            }
+
+            const stores =
+                await findResponse.json();
+
+            if (stores.length > 0) {
+
+                storeId =
+                    stores[0].id;
+
+                localStorage.setItem(
+                    "store_id",
+                    storeId
+                );
+            }
         }
 
+        // Make sure a store exists
+        if (!storeId) {
+
+            throw new Error(
+                "No store was found for this account."
+            );
+        }
+
+        // Update the existing store
+        const response =
+            await fetch(
+
+                SUPABASE_URL +
+                "/rest/v1/stores?id=eq." +
+                encodeURIComponent(storeId),
+
+                {
+                    method: "PATCH",
+
+                    headers:
+                        getSupabaseHeaders(),
+
+                    body:
+                        JSON.stringify({
+
+                            store_name:
+                                storeName,
+
+                            description:
+                                storeDescription
+
+                        })
+                }
+            );
 
         if (!response.ok) {
 
@@ -826,25 +780,7 @@ async function saveEditedStore() {
             );
         }
 
-
-        const result =
-            await response.json();
-
-
-        if (
-            !storeId &&
-            result &&
-            result.length &&
-            result[0].id
-        ) {
-
-            localStorage.setItem(
-                "store_id",
-                result[0].id
-            );
-        }
-
-
+        // Update the dashboard display
         const nameDisplay =
             document.getElementById(
                 "storeNameDisplay"
@@ -867,11 +803,9 @@ async function saveEditedStore() {
                 storeDescription;
         }
 
-
         alert(
             "✅ Your store has been saved!"
         );
-
 
         showDashboard("store");
 
@@ -887,43 +821,7 @@ async function saveEditedStore() {
             error.message
         );
     }
-}
-
-
-// =========================================
-// READ IMAGE
-// =========================================
-
-function readFileAsDataURL(file) {
-
-    return new Promise(function(resolve, reject) {
-
-        const reader =
-            new FileReader();
-
-        reader.onload =
-            function(event) {
-
-                resolve(
-                    event.target.result
-                );
-            };
-
-        reader.onerror =
-            function() {
-
-                reject(
-                    new Error(
-                        "Could not read image."
-                    )
-                );
-            };
-
-        reader.readAsDataURL(file);
-    });
-}
-
-
+                }
 // =========================================
 // BANNER PREVIEW
 // =========================================
